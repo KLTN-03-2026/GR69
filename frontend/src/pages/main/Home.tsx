@@ -38,7 +38,7 @@ function Home() {
                 <div className="container">
                     <div className="row">
                         <div className="col-lg-3">
-                            <CategoryDropdown items={categories}/>
+                            <CategoryDropdown items={categories} />
                         </div>
                         <div className="col-lg-9">
                             <div className="hero__search">
@@ -72,44 +72,46 @@ function Home() {
                 <div className="container">
                     <div className="section-title d-flex justify-content-between align-items-center">
                         <h2>Hải sản bán chạy</h2>
-                        <Link to="category-bestsaler.html" className="btn-view-all">Xem tất cả</Link>
+                        <Link to="/category/ban-chay-nhat" className="btn-view-all">Xem tất cả</Link>
                     </div>
                     <div className="row featured__filter">
                         {data.best_sellers?.map((item: any) => {
                             return (
                                 <div className="col-5-custom">
-                                    <div className="featured__item">
-                                        <div
-                                            className="featured__item__pic"
-                                            style={{
-                                                backgroundImage: `url(http://127.0.0.1:8000/${item.images?.[0]?.image_path})`,
-                                                backgroundSize: "cover",
-                                                backgroundPosition: "center",
-                                                height: "250px"
-                                            }}
-                                        >
-                                        </div>
-                                        <div className="featured__item__text">
-                                            <h6>{item.name}</h6>
-                                            <div className="price-and-cart">
-                                                <div className="price-box">
-                                                    <h5 className="price-sale">
-                                                        {item.price.toLocaleString()}đ
-                                                        <span className="unit">/ {item.unit}</span>
-                                                    </h5>
+                                    <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
+                                        <div className="featured__item">
+                                            <div
+                                                className="featured__item__pic"
+                                                style={{
+                                                    backgroundImage: `url(http://127.0.0.1:8000/${item.images?.[0]?.image_path})`,
+                                                    backgroundSize: "cover",
+                                                    backgroundPosition: "center",
+                                                    height: "250px"
+                                                }}
+                                            >
+                                            </div>
+                                            <div className="featured__item__text">
+                                                <h6>{item.name}</h6>
+                                                <div className="price-and-cart">
+                                                    <div className="price-box">
+                                                        <h5 className="price-sale">
+                                                            {item.price.toLocaleString()}đ
+                                                            <span className="unit">/ {item.unit}</span>
+                                                        </h5>
 
-                                                    {item.original_price && (
-                                                        <span className="price-original">
-                                                            {item.original_price.toLocaleString()}đ
-                                                        </span>
-                                                    )}
+                                                        {item.original_price && (
+                                                            <span className="price-original">
+                                                                {item.original_price.toLocaleString()}đ
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <a href="#" className="add-to-cart-btn">
+                                                        <i className="fa fa-shopping-cart" />
+                                                    </a>
                                                 </div>
-                                                <a href="#" className="add-to-cart-btn">
-                                                    <i className="fa fa-shopping-cart" />
-                                                </a>
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 </div>
                             );
                         })}
@@ -130,44 +132,46 @@ function Home() {
                     {/* Title */}
                     <div className="section-title">
                         <h2>Hải sản đông lạnh</h2>
-                        <a href="category-frozenseafood.html" className="btn-view-all">Xem tất cả</a>
+                        <Link to="/category/hai-san-dong-lanh-moi" className="btn-view-all">Xem tất cả</Link>
                     </div>
                     <div className="row featured__filter">
                         {data.best_sellers?.map((item: any) => {
                             return (
                                 <div className="col-5-custom">
-                                    <div className="featured__item">
-                                        <div
-                                            className="featured__item__pic"
-                                            style={{
-                                                backgroundImage: `url(http://127.0.0.1:8000/${item.images?.[0]?.image_path})`,
-                                                backgroundSize: "cover",
-                                                backgroundPosition: "center",
-                                                height: "250px"
-                                            }}
-                                        >
-                                        </div>
-                                        <div className="featured__item__text">
-                                            <h6>{item.name}</h6>
-                                            <div className="price-and-cart">
-                                                <div className="price-box">
-                                                    <h5 className="price-sale">
-                                                        {item.price.toLocaleString()}đ
-                                                        <span className="unit">/ {item.unit}</span>
-                                                    </h5>
+                                    <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
+                                        <div className="featured__item">
+                                            <div
+                                                className="featured__item__pic"
+                                                style={{
+                                                    backgroundImage: `url(http://127.0.0.1:8000/${item.images?.[0]?.image_path})`,
+                                                    backgroundSize: "cover",
+                                                    backgroundPosition: "center",
+                                                    height: "250px"
+                                                }}
+                                            >
+                                            </div>
+                                            <div className="featured__item__text">
+                                                <h6>{item.name}</h6>
+                                                <div className="price-and-cart">
+                                                    <div className="price-box">
+                                                        <h5 className="price-sale">
+                                                            {item.price.toLocaleString()}đ
+                                                            <span className="unit">/ {item.unit}</span>
+                                                        </h5>
 
-                                                    {item.original_price && (
-                                                        <span className="price-original">
-                                                            {item.original_price.toLocaleString()}đ
-                                                        </span>
-                                                    )}
+                                                        {item.original_price && (
+                                                            <span className="price-original">
+                                                                {item.original_price.toLocaleString()}đ
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <a href="#" className="add-to-cart-btn">
+                                                        <i className="fa fa-shopping-cart" />
+                                                    </a>
                                                 </div>
-                                                <a href="#" className="add-to-cart-btn">
-                                                    <i className="fa fa-shopping-cart" />
-                                                </a>
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 </div>
                             );
                         })}
@@ -187,44 +191,46 @@ function Home() {
                 <div className="container">
                     <div className="section-title d-flex justify-content-between align-items-center">
                         <h2>Hải sản nhập khẩu</h2>
-                        <a href="category-clams.html" className="btn-view-all">Xem tất cả</a>
+                        <Link to="/category/hai-san-nhap-khau" className="btn-view-all">Xem tất cả</Link>
                     </div>
                     <div className="row featured__filter">
                         {data.imported?.map((item: any) => {
                             return (
                                 <div className="col-5-custom">
-                                    <div className="featured__item">
-                                        <div
-                                            className="featured__item__pic"
-                                            style={{
-                                                backgroundImage: `url(http://127.0.0.1:8000/${item.images?.[0]?.image_path})`,
-                                                backgroundSize: "cover",
-                                                backgroundPosition: "center",
-                                                height: "250px"
-                                            }}
-                                        >
-                                        </div>
-                                        <div className="featured__item__text">
-                                            <h6>{item.name}</h6>
-                                            <div className="price-and-cart">
-                                                <div className="price-box">
-                                                    <h5 className="price-sale">
-                                                        {item.price.toLocaleString()}đ
-                                                        <span className="unit"> / {item.unit}</span>
-                                                    </h5>
+                                    <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
+                                        <div className="featured__item">
+                                            <div
+                                                className="featured__item__pic"
+                                                style={{
+                                                    backgroundImage: `url(http://127.0.0.1:8000/${item.images?.[0]?.image_path})`,
+                                                    backgroundSize: "cover",
+                                                    backgroundPosition: "center",
+                                                    height: "250px"
+                                                }}
+                                            >
+                                            </div>
+                                            <div className="featured__item__text">
+                                                <h6>{item.name}</h6>
+                                                <div className="price-and-cart">
+                                                    <div className="price-box">
+                                                        <h5 className="price-sale">
+                                                            {item.price.toLocaleString()}đ
+                                                            <span className="unit"> / {item.unit}</span>
+                                                        </h5>
 
-                                                    {item.original_price && (
-                                                        <span className="price-original">
-                                                            {item.original_price.toLocaleString()}đ
-                                                        </span>
-                                                    )}
+                                                        {item.original_price && (
+                                                            <span className="price-original">
+                                                                {item.original_price.toLocaleString()}đ
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <a href="#" className="add-to-cart-btn">
+                                                        <i className="fa fa-shopping-cart" />
+                                                    </a>
                                                 </div>
-                                                <a href="#" className="add-to-cart-btn">
-                                                    <i className="fa fa-shopping-cart" />
-                                                </a>
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 </div>
                             );
                         })}
@@ -237,44 +243,46 @@ function Home() {
                 <div className="container">
                     <div className="section-title d-flex justify-content-between align-items-center">
                         <h2>Ngao - Sò - Ốc</h2>
-                        <a href="category-clams.html" className="btn-view-all">Xem tất cả</a>
+                        <Link to="/category/ngao-so-oc" className="btn-view-all">Xem tất cả</Link>
                     </div>
                     <div className="row featured__filter">
                         {data.shellfish?.map((item: any) => {
                             return (
                                 <div className="col-5-custom">
-                                    <div className="featured__item">
-                                        <div
-                                            className="featured__item__pic"
-                                            style={{
-                                                backgroundImage: `url(http://127.0.0.1:8000/${item.images?.[0]?.image_path})`,
-                                                backgroundSize: "cover",
-                                                backgroundPosition: "center",
-                                                height: "250px"
-                                            }}
-                                        >
-                                        </div>
-                                        <div className="featured__item__text">
-                                            <h6>{item.name}</h6>
-                                            <div className="price-and-cart">
-                                                <div className="price-box">
-                                                    <h5 className="price-sale">
-                                                        {item.price.toLocaleString()}đ
-                                                        <span className="unit"> / {item.unit}</span>
-                                                    </h5>
+                                    <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
+                                        <div className="featured__item">
+                                            <div
+                                                className="featured__item__pic"
+                                                style={{
+                                                    backgroundImage: `url(http://127.0.0.1:8000/${item.images?.[0]?.image_path})`,
+                                                    backgroundSize: "cover",
+                                                    backgroundPosition: "center",
+                                                    height: "250px"
+                                                }}
+                                            >
+                                            </div>
+                                            <div className="featured__item__text">
+                                                <h6>{item.name}</h6>
+                                                <div className="price-and-cart">
+                                                    <div className="price-box">
+                                                        <h5 className="price-sale">
+                                                            {item.price.toLocaleString()}đ
+                                                            <span className="unit"> / {item.unit}</span>
+                                                        </h5>
 
-                                                    {item.original_price && (
-                                                        <span className="price-original">
-                                                            {item.original_price.toLocaleString()}đ
-                                                        </span>
-                                                    )}
+                                                        {item.original_price && (
+                                                            <span className="price-original">
+                                                                {item.original_price.toLocaleString()}đ
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <a href="#" className="add-to-cart-btn">
+                                                        <i className="fa fa-shopping-cart" />
+                                                    </a>
                                                 </div>
-                                                <a href="#" className="add-to-cart-btn">
-                                                    <i className="fa fa-shopping-cart" />
-                                                </a>
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 </div>
                             );
                         })}
@@ -288,44 +296,46 @@ function Home() {
                 <div className="container">
                     <div className="section-title d-flex justify-content-between align-items-center">
                         <h2>Cua - ghẹ</h2>
-                        <a href="category-clams.html" className="btn-view-all">Xem tất cả</a>
+                        <Link to="/category/cua-ghe-tuoi-roi" className="btn-view-all">Xem tất cả</Link>
                     </div>
                     <div className="row featured__filter">
                         {data.crab?.map((item: any) => {
                             return (
                                 <div className="col-5-custom">
-                                    <div className="featured__item">
-                                        <div
-                                            className="featured__item__pic"
-                                            style={{
-                                                backgroundImage: `url(http://127.0.0.1:8000/${item.images?.[0]?.image_path})`,
-                                                backgroundSize: "cover",
-                                                backgroundPosition: "center",
-                                                height: "250px"
-                                            }}
-                                        >
-                                        </div>
-                                        <div className="featured__item__text">
-                                            <h6>{item.name}</h6>
-                                            <div className="price-and-cart">
-                                                <div className="price-box">
-                                                    <h5 className="price-sale">
-                                                        {item.price.toLocaleString()}đ
-                                                        <span className="unit"> / {item.unit}</span>
-                                                    </h5>
+                                    <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
+                                        <div className="featured__item">
+                                            <div
+                                                className="featured__item__pic"
+                                                style={{
+                                                    backgroundImage: `url(http://127.0.0.1:8000/${item.images?.[0]?.image_path})`,
+                                                    backgroundSize: "cover",
+                                                    backgroundPosition: "center",
+                                                    height: "250px"
+                                                }}
+                                            >
+                                            </div>
+                                            <div className="featured__item__text">
+                                                <h6>{item.name}</h6>
+                                                <div className="price-and-cart">
+                                                    <div className="price-box">
+                                                        <h5 className="price-sale">
+                                                            {item.price.toLocaleString()}đ
+                                                            <span className="unit"> / {item.unit}</span>
+                                                        </h5>
 
-                                                    {item.original_price && (
-                                                        <span className="price-original">
-                                                            {item.original_price.toLocaleString()}đ
-                                                        </span>
-                                                    )}
+                                                        {item.original_price && (
+                                                            <span className="price-original">
+                                                                {item.original_price.toLocaleString()}đ
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <a href="#" className="add-to-cart-btn">
+                                                        <i className="fa fa-shopping-cart" />
+                                                    </a>
                                                 </div>
-                                                <a href="#" className="add-to-cart-btn">
-                                                    <i className="fa fa-shopping-cart" />
-                                                </a>
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 </div>
                             );
                         })}
@@ -333,50 +343,51 @@ function Home() {
                 </div>
             </section>
 
-
             {/* Mực */}
             <section className="featured spad">
                 <div className="container">
                     <div className="section-title d-flex justify-content-between align-items-center">
                         <h2>Mực</h2>
-                        <a href="category-clams.html" className="btn-view-all">Xem tất cả</a>
+                        <Link to="/category/muc-tuoi-moi-ngay" className="btn-view-all">Xem tất cả</Link>
                     </div>
                     <div className="row featured__filter">
                         {data.shrimp?.map((item: any) => {
                             return (
                                 <div className="col-5-custom">
-                                    <div className="featured__item">
-                                        <div
-                                            className="featured__item__pic"
-                                            style={{
-                                                backgroundImage: `url(http://127.0.0.1:8000/${item.images?.[0]?.image_path})`,
-                                                backgroundSize: "cover",
-                                                backgroundPosition: "center",
-                                                height: "250px"
-                                            }}
-                                        >
-                                        </div>
-                                        <div className="featured__item__text">
-                                            <h6>{item.name}</h6>
-                                            <div className="price-and-cart">
-                                                <div className="price-box">
-                                                    <h5 className="price-sale">
-                                                        {item.price.toLocaleString()}đ
-                                                        <span className="unit"> / {item.unit}</span>
-                                                    </h5>
+                                    <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
+                                        <div className="featured__item">
+                                            <div
+                                                className="featured__item__pic"
+                                                style={{
+                                                    backgroundImage: `url(http://127.0.0.1:8000/${item.images?.[0]?.image_path})`,
+                                                    backgroundSize: "cover",
+                                                    backgroundPosition: "center",
+                                                    height: "250px"
+                                                }}
+                                            >
+                                            </div>
+                                            <div className="featured__item__text">
+                                                <h6>{item.name}</h6>
+                                                <div className="price-and-cart">
+                                                    <div className="price-box">
+                                                        <h5 className="price-sale">
+                                                            {item.price.toLocaleString()}đ
+                                                            <span className="unit"> / {item.unit}</span>
+                                                        </h5>
 
-                                                    {item.original_price && (
-                                                        <span className="price-original">
-                                                            {item.original_price.toLocaleString()}đ
-                                                        </span>
-                                                    )}
+                                                        {item.original_price && (
+                                                            <span className="price-original">
+                                                                {item.original_price.toLocaleString()}đ
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <a href="#" className="add-to-cart-btn">
+                                                        <i className="fa fa-shopping-cart" />
+                                                    </a>
                                                 </div>
-                                                <a href="#" className="add-to-cart-btn">
-                                                    <i className="fa fa-shopping-cart" />
-                                                </a>
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 </div>
                             );
                         })}

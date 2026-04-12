@@ -33,6 +33,7 @@ Route::get('/products', [ProductController::class, 'index']);
 Route::get('/products/best-sellers', [ProductController::class, 'bestSellers']);
 Route::get('/products/new', [ProductController::class, 'newProducts']);
 Route::get('/products/{id}', [ProductController::class, 'show']);
+Route::get('/products/slug/{slug}', [ProductController::class, 'showBySlug']);
 
 // Reviews (public - read only)
 Route::get('/products/{id}/reviews', [ReviewController::class, 'productReviews']);
@@ -42,6 +43,7 @@ Route::get('/posts', [PostController::class, 'index']);
 Route::get('/posts/{id}', [PostController::class, 'show']);
 
 // Coupon check
+Route::get('/coupons', [CouponController::class, 'index']);
 Route::post('/coupons/apply', [CouponController::class, 'apply']);
 
 // Contact

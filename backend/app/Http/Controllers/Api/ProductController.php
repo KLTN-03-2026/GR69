@@ -122,6 +122,24 @@ class ProductController extends Controller
             'related' => $related,
         ]);
     }
+    public function showBySlug($slug)
+    {
+    $product = Product::with(['category', 'images', 'approvedReviews.user'])
+        ->where('slug', $slug)
+        ->firstOrFail();
+
+    $related = Product::with('images')
+        ->where('category_id', $product->category_id)
+        ->where('id', '!=', $product->id)
+        ->limit(4)
+        ->get();
+
+    return response()->json([
+        'success' => true,
+        'product' => $product,
+        'related' => $related,
+    ]);
+}
 
     public function bestSellers()
     {

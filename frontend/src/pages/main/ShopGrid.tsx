@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { categoryService } from "../../services/user/categoryService";
 import CategoryDropdown from "../../components/category/CategoryDropDown";
+import { productService } from "../../services/user/productService";
+import { Link } from "react-router-dom";
 
-function CategoryPage() {
-    const { slug } = useParams();
+function ShopGrid() {
     const [products, setProducts] = useState<any[]>([]);
-    const [category, setCategory] = useState<any>(null);
     const categories = [
         { name: "Bán chạy nhất", path: "/category/ban-chay-nhat" },
         { name: "Hải sản đông lạnh", path: "/category/hai-san-dong-lanh-moi" },
@@ -22,15 +20,14 @@ function CategoryPage() {
 
     useEffect(() => {
         const fetchCategory = async () => {
-            if (!slug) return;
-            const res = await categoryService.getBySlug(slug);
+            const res = await productService.getAll();
+            console.log(res.data);
 
-            setCategory(res.data.category);
-            setProducts(res.data.products);
+            setProducts(res.data.products.data);
         };
 
         fetchCategory();
-    }, [slug]);
+    }, []);
 
     return (
         <>
@@ -68,7 +65,7 @@ function CategoryPage() {
                         <div className="breadcrumb-inner">
                             <a href="index.html">Trang chủ</a> /
                             <a href="#">Danh mục</a> /
-                            <span>{category?.name}</span>
+                            <span>Cửa hàng</span>
                         </div>
                     </div>
                 </div>
@@ -82,12 +79,12 @@ function CategoryPage() {
             <section className="featured spad">
                 <div className="container">
                     <div className="section-title d-flex justify-content-between align-items-center">
-                        <h2>{category?.name || "Danh mục sản phẩm"}</h2>
+                        <h2>Tất cả sản phẩm</h2>
                     </div>
                     <div className="row featured__filter">
                         {products?.map((item: any) => {
                             return (
-                                <div className="col-5-custom">
+                                <div className="col-5-custom" key={item.id}>
                                     <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                                         <div className="featured__item">
                                             <div
@@ -131,4 +128,4 @@ function CategoryPage() {
         </>
     );
 }
-export default CategoryPage;
+export default ShopGrid;

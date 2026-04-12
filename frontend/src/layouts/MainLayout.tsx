@@ -76,23 +76,23 @@ function MainLayout() {
                         <div className="col-lg-6">
                             <nav className="header__menu">
                                 <ul>
-                                    <li className="active"><a href="./index.html">Trang chủ</a></li>
-                                    <li><a href="./shop-grid.html">Cửa hàng</a></li>
+                                    <li className="active"><Link to="/">Trang chủ</Link></li>
+                                    <li><Link to="/shop-grid">Cửa hàng</Link></li>
                                     <li><a href="#">Trang</a>
                                         <ul className="header__menu__dropdown">
-                                            <li><a href="./user-infomation.html">Tài khoản</a></li>
-                                            <li><a href="./shoping-cart.html">Giỏ hàng</a></li>
-                                            <li><a href="./checkout.html">Thanh toán</a></li>
+                                            <li><Link to="/account/my-info">Tài khoản</Link></li>
+                                            <li><Link to="/shoping-cart">Giỏ hàng</Link></li>
+                                            <li><Link to="/checkout">Thanh toán</Link></li>
                                         </ul>
                                     </li>
-                                    <li><a href="./contact.html">Liên hệ</a></li>
+                                    <li><Link to="/contact">Liên hệ</Link></li>
                                 </ul>
                             </nav>
                         </div>
                         <div className="col-lg-3">
                             <div className="header__cart">
                                 <ul>
-                                    <li><a href="shoping-cart.html"><i className="fa fa-shopping-cart" /><span>3</span></a></li>
+                                    <li><Link to="/shoping-cart"><i className="fa fa-shopping-cart" /><span>3</span></Link></li>
                                 </ul>
                             </div>
                         </div>
@@ -113,7 +113,7 @@ function MainLayout() {
                                 <div className="footer__about__logo" style={{ display: 'flex', justifyContent: 'center' }}>
                                     <a href="./index.html">
                                         <img
-                                            src="img/user-img/logo_main.png"
+                                            src="../img/user-img/logo_main.png"
                                             alt="Fishmarket Logo"
                                             style={{ width: '150px', height: '100px' }}
                                         />
@@ -130,11 +130,11 @@ function MainLayout() {
                             <div className="footer__widget">
                                 <h6>Liên kết hữu ích</h6>
                                 <ul>
-                                    <li><a href="#">Về chúng tôi</a></li>
-                                    <li><a href="#">Mua sắm an toàn</a></li>
-                                    <li><a href="#">Thông tin giao hàng</a></li>
-                                    <li><a href="#">Chính sách</a></li>
-                                    <li><a href="contact.html">Địa chỉ của shop</a></li>
+                                    <li><Link to="#">Về chúng tôi</Link></li>
+                                    <li><Link to="#">Mua sắm an toàn</Link></li>
+                                    <li><Link to="#">Thông tin giao hàng</Link></li>
+                                    <li><Link to="#">Chính sách</Link></li>
+                                    <li><Link to="/contact">Địa chỉ của shop</Link></li>
                                 </ul>
                             </div>
                         </div>

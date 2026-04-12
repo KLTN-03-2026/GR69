@@ -11,6 +11,10 @@ export const productService = {
   getById: (id: number) =>
     axiosClient.get(`/products/${id}`),
 
+  getBySlug: (slug: string) => {
+    return axiosClient.get(`/products/slug/${slug}`);
+  },
+
   bestSeller: () =>
     axiosClient.get("/products/best-sellers"),
 

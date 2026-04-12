@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axiosClient from "../../services/axiosClient";
+import { toast } from "react-toastify";
 
 interface ProfileForm {
     name: string;
@@ -23,8 +24,8 @@ interface UpdateProfileResponse {
 }
 function AdminProfile() {
 
-    const userLocal = JSON.parse(localStorage.getItem("user") || "{}");
-
+    const [loadingProfile, setLoadingProfile] = useState(false);
+    const [loadingPassword, setLoadingPassword] = useState(false);
     const [input, setInput] = useState<ProfileForm>({
         name: "",
         email: "",
@@ -40,19 +41,21 @@ function AdminProfile() {
     }
 
     useEffect(() => {
-        if (userLocal && Object.keys(userLocal).length > 0) {
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+        if (user && Object.keys(user).length > 0) {
             setInput({
-                name: userLocal.name || "",
-                email: userLocal.email || "",
-                phone: userLocal.phone || "",
-                gender: userLocal.gender ?? "",
-                birthday: formatDate(userLocal.birthday), // xử lý undefined
+                name: user.name || "",
+                email: user.email || "",
+                phone: user.phone || "",
+                gender: user.gender ?? "",
+                birthday: formatDate(user.birthday),
                 avatar: null
             });
 
             setPreview(
-                userLocal.avatar
-                    ? "http://localhost:8000/" + userLocal.avatar
+                user.avatar
+                    ? user.avatar
                     : "/img/default.png"
             );
         }
@@ -92,6 +95,7 @@ function AdminProfile() {
             formData.append("avatar", input.avatar);
         }
 
+        setLoadingProfile(true);
         axiosClient.post<UpdateProfileResponse>("/user/profile", formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
@@ -100,28 +104,27 @@ function AdminProfile() {
             .then((res) => {
                 const user = res.data.user;
 
-                alert("Cap nhat thanh cong");
+                toast.success("Cập nhật thành công");
                 localStorage.setItem("user", JSON.stringify(user));
-
-                setInput(prev => ({
-                    ...prev,
-                    ...user,
+                setInput({
+                    name: user.name || "",
+                    email: user.email || "",
+                    phone: user.phone || "",
                     gender: user.gender ?? "",
                     birthday: formatDate(user.birthday),
                     avatar: null
-                }));
-
+                });
                 setPreview(
-                    userLocal.avatar
-                        ? "http://localhost:8000/" + userLocal.avatar
+                    user.avatar
+                        ? `${user.avatar}?t=${Date.now()}`
                         : "/img/default.png"
                 );
             })
             .catch((err) => {
-                console.log(err);
-                alert(err.response?.data?.message || "Có lỗi xảy ra khi cập nhật!");
-            });
-
+                const message = err.response?.data?.message || "Có lỗi xảy ra";
+                toast.error(message);
+            })
+            .finally(() => setLoadingProfile(false));
     }
 
     const [password, setPassword] = useState({
@@ -146,18 +149,20 @@ function AdminProfile() {
             return;
         }
 
+        setLoadingProfile(true);
         axiosClient.put("/user/password", {
             current_password: password.current,
             password: password.new,
             password_confirmation: password.confirm
         })
             .then(() => {
-            alert("Đổi mật khẩu thành công");
-            setPassword({ current: "", new: "", confirm: "" });
-        })
+                alert("Đổi mật khẩu thành công");
+                setPassword({ current: "", new: "", confirm: "" });
+            })
             .catch(() => {
                 alert("Mật khẩu cũ không đúng");
-            });
+            })
+            .finally(() => setLoadingProfile(false));
     }
     return (
         <>
@@ -194,7 +199,7 @@ function AdminProfile() {
                                     </div>
                                     <div className="col-md-6">
                                         <label htmlFor="email" className="form-label-custom">Email *</label>
-                                        <input type="email" name="email" value={input.email} onChange={handleChange} className="form-control" id="email" required />
+                                        <input type="email" name="email" value={input.email} onChange={handleChange} className="form-control" id="email" readOnly />
                                     </div>
                                 </div>
 
@@ -220,7 +225,7 @@ function AdminProfile() {
                                         <input type="text" name="phone" value={input.phone} onChange={handleChange} className="form-control" id="phone" required />
                                     </div>
                                 </div>
-                                <button type="submit" className="btn btn-teal px-4" style={{ backgroundColor: "#1abc9c" }}>Lưu thông tin</button>
+                                <button type="submit" disabled={loadingProfile} className="btn btn-teal px-4" style={{ backgroundColor: "#1abc9c" }}>{loadingProfile ? "Đang lưu..." : "Lưu thông tin"}</button>
                             </form>
                         </div>
 
@@ -248,7 +253,7 @@ function AdminProfile() {
                                 <div className="row">
                                     <div className="col-md-3" />
                                     <div className="col-md-9">
-                                        <button type="submit" className="btn btn-secondary px-4">Đổi mật khẩu</button>
+                                        <button type="submit" disabled={loadingProfile} className="btn btn-secondary px-4">{loadingProfile ? "Đang lưu..." : "Lưu thông tin"}</button>
                                     </div>
                                 </div>
                             </form>

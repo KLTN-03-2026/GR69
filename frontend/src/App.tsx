@@ -26,6 +26,17 @@ import AdminProfile from './pages/admin/AdminProfile';
 import EditProduct from './pages/admin/EditProduct';
 import EditVoucher from './pages/admin/EditVoucher';
 import CategoryPage from './pages/main/CategoryPage';
+import ShopGrid from './pages/main/ShopGrid';
+import ProductDetail from './pages/main/ProductDetail';
+import AccountLayout from './layouts/AccountLayout';
+import MyOrders from './pages/main/profile/MyOrders';
+import MyAddress from './pages/main/profile/MyAddress';
+import MyInfor from './pages/main/profile/MyInfor';
+import MyPassword from './pages/main/profile/MyPassword';
+import AddMyAddress from './pages/main/profile/AddMyAddress';
+import Cart from './pages/main/Cart';
+import Checkout from './pages/main/Checkout';
+import OrderSuccess from './pages/main/OrderSuccess';
 
 
 function App() {
@@ -34,7 +45,13 @@ function App() {
       <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
-          <Route path="/category/:slug" element={<CategoryPage />} />
+          <Route path="category/:slug" element={<CategoryPage />} />
+          <Route path="shop-grid" element={<ShopGrid />} />
+          <Route path="/product/:slug" element={<ProductDetail />} />
+          <Route path="/shoping-cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
+
           {/* <Route path="contact" element={<Contact />} /> */}
         </Route>
 
@@ -46,13 +63,13 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="product-management" element={<ProductManagement />} />
           <Route path="add-product" element={<AddProduct />} />
-          <Route path="edit-product/:id" element={<EditProduct/>} />
+          <Route path="edit-product/:id" element={<EditProduct />} />
           <Route path="orders-management" element={<OrdersManagement />} />
           <Route path="order-detail" element={<OrdersDetail />} />
           <Route path="users-management" element={<UsersManagement />} />
           <Route path="category-management" element={<CatagoriesManagement />} />
           <Route path="add-category" element={<AddCategory />} />
-          <Route path="edit-category/:slug" element={<EditCategory/>} />
+          <Route path="edit-category/:slug" element={<EditCategory />} />
           <Route path="voucher-management" element={<VouchersManagement />} />
           <Route path="add-voucher" element={<AddVoucher />} />
           <Route path="edit-voucher/:id" element={<EditVoucher />} />
@@ -63,6 +80,14 @@ function App() {
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+        </Route>
+
+        <Route path="/account" element={<AccountLayout />}>
+          <Route path="my-orders" element={<MyOrders />} />
+          <Route path="my-address" element={<MyAddress />} />
+          <Route path="add-address" element={<AddMyAddress />} />
+          <Route path="my-info" element={<MyInfor />} />
+          <Route path="my-password" element={<MyPassword />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 interface CategoryItem {
     name: string;
@@ -12,7 +12,16 @@ interface Props {
 }
 
 const HeroCategories = ({ title = "Danh mục sản phẩm", items }: Props) => {
+    const location = useLocation();
     const [open, setOpen] = useState(true);
+
+    useEffect(() => {
+        if (location.pathname === "/") {
+            setOpen(true);
+        } else {
+            setOpen(false);
+        }
+    }, [location.pathname]);
 
     return (
         <div className="hero__categories">

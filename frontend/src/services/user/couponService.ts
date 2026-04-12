@@ -2,6 +2,8 @@ import axiosClient from "../axiosClient";
 
 
 export const couponService = {
-  apply: (code: string) =>
-    axiosClient.post("/coupons/apply", { code }),
+  getAll: () => axiosClient.get("/coupons"),
+  
+  apply: (code: string, subtotal: number) =>
+    axiosClient.post("/coupons/apply", { code, subtotal }),
 };
