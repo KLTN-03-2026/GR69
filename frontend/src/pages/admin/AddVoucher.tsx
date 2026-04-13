@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { adminVoucherService } from "../../services/admin/adminVoucherService";
+import { toast } from "react-toastify";
 
 interface VoucherForm {
     code: string;
@@ -103,7 +104,7 @@ function AddVoucher() {
 
         adminVoucherService.create(data)
             .then(() => {
-                alert("Thêm voucher thành công");
+                toast.success("Thêm voucher thành công");
 
                 setInput({
                     code: "",

@@ -9,4 +9,7 @@ export const orderService = {
 
   create: (data: any) =>
     axiosClient.post("/orders", data),
+  
+  cancelOrder: (id: number) =>
+    axiosClient.put(`/orders/${id}/cancel`),
 };

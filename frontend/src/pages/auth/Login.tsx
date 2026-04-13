@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosClient from "../../services/axiosClient";
+import { toast } from "react-toastify";
 
 interface LoginForm {
     email: string,
@@ -57,7 +58,7 @@ function Login() {
             axiosClient.post("/login", data)
                 .then((response) => {
                     console.log("success", response);
-                    alert("Đăng nhập thành công");
+                    toast.success("Đăng nhập thành công");
 
                     const user = response.data.user;
                     const token = response.data.token;

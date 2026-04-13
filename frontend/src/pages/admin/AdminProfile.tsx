@@ -156,11 +156,11 @@ function AdminProfile() {
             password_confirmation: password.confirm
         })
             .then(() => {
-                alert("Đổi mật khẩu thành công");
+                toast.success("Đổi mật khẩu thành công");
                 setPassword({ current: "", new: "", confirm: "" });
             })
             .catch(() => {
-                alert("Mật khẩu cũ không đúng");
+                toast.error("Mật khẩu cũ không đúng");
             })
             .finally(() => setLoadingProfile(false));
     }

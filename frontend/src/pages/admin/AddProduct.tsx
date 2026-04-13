@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { categoryService } from "../../services/user/categoryService";
 import { adminProductService } from "../../services/admin/adminProductService";
+import { toast } from "react-toastify";
 
 interface ProductForm {
     name: string;
@@ -199,7 +200,7 @@ function AddProduct() {
             adminProductService.create(formData)
                 .then(res => {
                     console.log("SUCCESS", res.data);
-                    alert("Thêm sản phẩm thành công");
+                    toast.success("Thêm sản phẩm thành công");
                 })
                 // .finally(() => setLoading(false))
                 .catch(err => {

@@ -37,6 +37,7 @@ import AddMyAddress from './pages/main/profile/AddMyAddress';
 import Cart from './pages/main/Cart';
 import Checkout from './pages/main/Checkout';
 import OrderSuccess from './pages/main/OrderSuccess';
+import MyDetailOrder from './pages/main/profile/MyDetailOrder';
 
 
 function App() {
@@ -65,7 +66,7 @@ function App() {
           <Route path="add-product" element={<AddProduct />} />
           <Route path="edit-product/:id" element={<EditProduct />} />
           <Route path="orders-management" element={<OrdersManagement />} />
-          <Route path="order-detail" element={<OrdersDetail />} />
+          <Route path="order-detail/:id" element={<OrdersDetail />} />
           <Route path="users-management" element={<UsersManagement />} />
           <Route path="category-management" element={<CatagoriesManagement />} />
           <Route path="add-category" element={<AddCategory />} />
@@ -84,6 +85,7 @@ function App() {
 
         <Route path="/account" element={<AccountLayout />}>
           <Route path="my-orders" element={<MyOrders />} />
+          <Route path="order-detail/:id" element={<MyDetailOrder />} />
           <Route path="my-address" element={<MyAddress />} />
           <Route path="add-address" element={<AddMyAddress />} />
           <Route path="my-info" element={<MyInfor />} />

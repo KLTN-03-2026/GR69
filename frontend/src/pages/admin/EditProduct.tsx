@@ -3,6 +3,7 @@ import { categoryService } from "../../services/user/categoryService";
 import { adminProductService } from "../../services/admin/adminProductService";
 import { useParams } from "react-router-dom";
 import { productService } from "../../services/user/productService";
+import { toast } from "react-toastify";
 
 interface ProductForm {
     name: string;
@@ -235,7 +236,7 @@ function EditProduct() {
             adminProductService.updateWithFile(productId, formData)
                 .then(res => {
                     console.log("SUCCESS", res.data);
-                    alert("cập nhật sản phẩm thành công");
+                    toast.success("cập nhật sản phẩm thành công");
                 })
                 .catch(err => {
                     console.log(err.response.data);

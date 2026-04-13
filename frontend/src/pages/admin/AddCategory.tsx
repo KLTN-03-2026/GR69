@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { adminCategoryService } from "../../services/admin/adminCategoryService";
+import { toast } from "react-toastify";
 
 interface CategoryForm {
     name: string;
@@ -122,11 +123,11 @@ function AddCategory() {
 
         adminCategoryService.create(formData)
             .then((response) => {
-                alert("Thêm danh mục thành công");
+                toast.success("Thêm danh mục thành công");
                 console.log("SUCCESS", response.data);
             })
             .catch((error) => {
-                alert("Thêm danh mục thất bại");
+                toast.error("Thêm danh mục thất bại");
                 console.log("ERROR", error);
             });
     }

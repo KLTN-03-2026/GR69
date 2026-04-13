@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosClient from "../../services/axiosClient";
 import { useParams } from "react-router-dom";
 import { categoryService } from "../../services/user/categoryService";
+import { toast } from "react-toastify";
 
 interface CategoryForm {
     id?: number;
@@ -140,11 +141,11 @@ function EditCategory() {
             }
         })
             .then((response) => {
-                alert("Cập nhật danh mục thành công");
+                toast.success("Cập nhật danh mục thành công");
                 console.log("SUCCESS", response.data);
             })
             .catch((error) => {
-                alert("Cập nhật danh mục thất bại");
+                toast.error("Cập nhật danh mục thất bại");
                 console.log("ERROR", error);
             });
     }

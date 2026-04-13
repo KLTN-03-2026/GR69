@@ -129,6 +129,18 @@ class OrderController extends Controller
         return response()->json(['success' => true, 'orders' => $orders]);
     }
 
+    public function adminShow($id)
+    {
+        $order = Order::with([
+            'user',
+            'items.product.images'
+        ])->findOrFail($id);
+        return response()->json([
+            'success' => true,
+            'order' => $order
+        ]);
+    }
+
     public function updateStatus(Request $request, $id)
     {
         $validated = $request->validate([
@@ -138,7 +150,14 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
 
         // If cancelling, restore stock
-        if ($validated['status'] === 'cancelled' && $order->status !== 'cancelled') {
+        if ($validated['status'] === 'cancelled') {
+            if ($order->status !== 'pending') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Chỉ được hủy khi đơn ở trạng thái chờ xử lý'
+                ], 422);
+            }
+            
             foreach ($order->items as $item) {
                 Product::where('id', $item->product_id)->increment('stock', $item->quantity);
             }
@@ -151,4 +170,29 @@ class OrderController extends Controller
             'order' => $order->load(['user', 'items']),
         ]);
     }
+
+    public function cancel($id, Request $request)
+    {
+    $order = $request->user()->orders()->findOrFail($id);
+
+    if ($order->status !== 'pending') {
+        return response()->json([
+            'success' => false,
+            'message' => 'Chỉ được hủy đơn khi đang chờ xử lý'
+        ], 400);
+    }
+
+    // restore stock
+    foreach ($order->items as $item) {
+        Product::where('id', $item->product_id)
+            ->increment('stock', $item->quantity);
+    }
+
+    $order->update(['status' => 'cancelled']);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Đã hủy đơn hàng'
+    ]);
+}
 }

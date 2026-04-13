@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import axiosClient from "../../services/axiosClient";
+import { toast } from "react-toastify";
 
 interface RegisterForm {
     name: string,
@@ -89,7 +90,7 @@ function Register() {
             axiosClient.post("/register", data)
                 .then((response) => {
                     console.log("SUCCESS:", response);
-                    alert("Đăng ký thành công");
+                    toast.success("Đăng ký thành công");
 
                     setInput({
                         name: "",

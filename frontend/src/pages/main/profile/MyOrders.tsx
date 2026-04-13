@@ -1,4 +1,53 @@
+import { useEffect, useState } from "react";
+import { orderService } from "../../../services/user/orderService";
+import { Link } from "react-router-dom";
+
+interface Order {
+    id: number;
+    created_at: string;
+    status: string;
+    total_amount: number;
+}
+
 function MyOrders() {
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        orderService.getAll()
+            .then(res => {
+                setOrders(res.data.orders);
+                console.log(res.data.orders);
+            })
+            .catch(() => {
+                console.log("load orders failed");
+            })
+            .finally(() => setLoading(false));
+    }, []);
+
+
+    const formatDate = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString("vi-VN");
+    };
+
+
+    const getStatus = (status: string) => {
+        switch (status) {
+            case "pending":
+                return { label: "Chờ xác nhận", className: "status-warning" };
+            case "processing":
+                return { label: "Đang xử lý", className: "status-primary" };
+            case "shipping":
+                return { label: "Đang giao", className: "status-info" };
+            case "delivered":
+                return { label: "Đã giao", className: "status-success" };
+            case "cancelled":
+                return { label: "Đã hủy", className: "status-danger" };
+            default:
+                return { label: status, className: "" };
+        }
+    };
     return (
         <>
             <div className="order-table-container table-responsive">
@@ -13,50 +62,38 @@ function MyOrders() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>#7</td>
-                            <td>05/05/2025</td>
-                            <td>
-                                <span className="status-badge status-warning">Đã hủy</span>
-                            </td>
-                            <td>129.250 đ</td>
-                            <td>
-                                <a href="order-details.html" className="btn-view-detail">Xem chi tiết</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#6</td>
-                            <td>05/05/2025</td>
-                            <td>
-                                <span className="status-badge status-warning">Chờ xác nhận</span>
-                            </td>
-                            <td>105.000 đ</td>
-                            <td>
-                                <a href="order-details.html" className="btn-view-detail">Xem chi tiết</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#5</td>
-                            <td>03/05/2025</td>
-                            <td>
-                                <span className="status-badge status-primary">Đang xử lý</span>
-                            </td>
-                            <td>107.098 đ</td>
-                            <td>
-                                <a href="order-details.html" className="btn-view-detail">Xem chi tiết</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>#4</td>
-                            <td>03/05/2025</td>
-                            <td>
-                                <span className="status-badge status-warning">Chờ xác nhận</span>
-                            </td>
-                            <td>473.642 đ</td>
-                            <td>
-                                <a href="order-details.html" className="btn-view-detail">Xem chi tiết</a>
-                            </td>
-                        </tr>
+                        {loading && (
+                            <tr>
+                                <td colSpan={5} className="text-center">
+                                    Đang tải đơn hàng...
+                                </td>
+                            </tr>
+                        )}
+
+                        {!loading && orders.length === 0 && (
+                            <tr>
+                                <td colSpan={5} className="text-center">
+                                    Bạn chưa có đơn hàng nào
+                                </td>
+                            </tr>
+                        )}
+
+                        {orders.map(order => {
+                            const status = getStatus(order.status);
+                            return (
+                                <tr key={order.id}>
+                                    <td>#{order.id}</td>
+                                    <td>{formatDate(order.created_at)}</td>
+                                    <td>
+                                        <span className={`status-badge ${status.className}`}>{status.label}</span>
+                                    </td>
+                                    <td>{order.total_amount.toLocaleString()}đ</td>
+                                    <td>
+                                        <Link to={`/account/order-detail/${order.id}`} className="btn-view-detail">Xem chi tiết</Link>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { adminVoucherService } from "../../services/admin/adminVoucherService";
+import { toast } from "react-toastify";
 
 interface VoucherForm {
     code: string;
@@ -128,7 +129,7 @@ function EditVoucher() {
 
         adminVoucherService.update(Number(id), data)
             .then(() => {
-                alert("Thêm voucher thành công");
+                toast.success("Thêm voucher thành công");
 
                 setInput({
                     code: "",
@@ -142,6 +143,7 @@ function EditVoucher() {
                 });
             })
             .catch(err => {
+                toast.error("Thêm voucher thất bại");
                 console.log(err.response?.data);
             });
     };

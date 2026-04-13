@@ -583,24 +583,35 @@ body {
 
 /* Trạng thái: Chờ xử lý (Vàng) */
 .status-pending {
-    background-color: #fef3c7;
-    color: #92400e;
-    border-color: #fde68a;
+    background-color: #facc15; /* vàng */
+    color: #000;
+    border-color: #facc15;
+}
+.status-warning {
+    background: #facc15;
 }
 
-.status-pending:focus {
-    border-color: #fcd34d;
+.status-primary {
+    background: #3b82f6;
 }
 
-/* Trạng thái: Đã giao (Xanh lá) */
-.status-delivered {
-    background-color: #d1fae5;
-    color: #065f46;
-    border-color: #a7f3d0;
+.status-info {
+    background: #06b6d4;
 }
 
-.status-delivered:focus {
-    border-color: #6ee7b7;
+.status-success {
+    background: #22c55e;
+}
+
+.status-danger {
+    background: #ef4444;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 12px;
 }
 
 /* Nút Xem chi tiết */
