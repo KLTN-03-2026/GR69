@@ -5,6 +5,9 @@ import HeroSlider from "../../components/hero/HeroSlider";
 import { useEffect, useState } from "react";
 import { productService } from "../../services/user/productService";
 import CategoryDropdown from "../../components/category/CategoryDropDown";
+import { useCart } from "../../context/CartContext";
+import { toast } from "react-toastify";
+import Hero from "../../components/hero/Hero";
 
 
 function Home() {
@@ -22,6 +25,7 @@ function Home() {
         { name: "Mực", path: "/category/muc-tuoi-moi-ngay" },
     ];
 
+    const { addToCart } = useCart();
     useEffect(() => {
         const fetchHome = async () => {
             const res = await productService.getHome();
@@ -34,35 +38,7 @@ function Home() {
 
     return (
         <>
-            <section className="hero">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-lg-3">
-                            <CategoryDropdown items={categories} />
-                        </div>
-                        <div className="col-lg-9">
-                            <div className="hero__search">
-                                <div className="hero__search__form">
-                                    <form action="#">
-                                        <input type="text" placeholder="Bạn muốn mua gì?" />
-                                        <button type="submit" className="site-btn">Tìm kiếm</button>
-                                    </form>
-                                </div>
-                                <div className="hero__search__phone">
-                                    <div className="hero__search__phone__icon">
-                                        <i className="fa fa-phone" />
-                                    </div>
-                                    <div className="hero__search__phone__text">
-                                        <h5>09090909</h5>
-                                        <span>Hỗ trợ 24/7</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <HeroSlider />
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <Hero categories={categories} showSlider />
             <section className="categories">
                 <div className="container">
                     <CategorySlider />
@@ -78,8 +54,8 @@ function Home() {
                         {data.best_sellers?.map((item: any) => {
                             return (
                                 <div className="col-5-custom">
-                                    <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
-                                        <div className="featured__item">
+                                    <div className="featured__item">
+                                        <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                                             <div
                                                 className="featured__item__pic"
                                                 style={{
@@ -90,28 +66,37 @@ function Home() {
                                                 }}
                                             >
                                             </div>
-                                            <div className="featured__item__text">
+                                        </Link>
+                                        <div className="featured__item__text">
+                                            <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                                                 <h6>{item.name}</h6>
-                                                <div className="price-and-cart">
-                                                    <div className="price-box">
-                                                        <h5 className="price-sale">
-                                                            {item.price.toLocaleString()}đ
-                                                            <span className="unit">/ {item.unit}</span>
-                                                        </h5>
+                                            </Link>
+                                            <div className="price-and-cart">
+                                                <div className="price-box">
+                                                    <h5 className="price-sale">
+                                                        {item.price.toLocaleString()}đ
+                                                        <span className="unit">/ {item.unit}</span>
+                                                    </h5>
 
-                                                        {item.original_price && (
-                                                            <span className="price-original">
-                                                                {item.original_price.toLocaleString()}đ
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                    <a href="#" className="add-to-cart-btn">
-                                                        <i className="fa fa-shopping-cart" />
-                                                    </a>
+                                                    {item.original_price && (
+                                                        <span className="price-original">
+                                                            {item.original_price.toLocaleString()}đ
+                                                        </span>
+                                                    )}
                                                 </div>
+                                                <button className="add-to-cart-btn"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        addToCart(item, 1);
+                                                        toast.success("Đã thêm vào giỏ hàng");
+
+                                                    }}>
+                                                    <i className="fa fa-shopping-cart" />
+                                                </button>
                                             </div>
                                         </div>
-                                    </Link>
+                                    </div>
                                 </div>
                             );
                         })}
@@ -138,8 +123,8 @@ function Home() {
                         {data.best_sellers?.map((item: any) => {
                             return (
                                 <div className="col-5-custom">
-                                    <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
-                                        <div className="featured__item">
+                                    <div className="featured__item">
+                                        <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                                             <div
                                                 className="featured__item__pic"
                                                 style={{
@@ -150,28 +135,36 @@ function Home() {
                                                 }}
                                             >
                                             </div>
-                                            <div className="featured__item__text">
+                                        </Link>
+                                        <div className="featured__item__text">
+                                            <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                                                 <h6>{item.name}</h6>
-                                                <div className="price-and-cart">
-                                                    <div className="price-box">
-                                                        <h5 className="price-sale">
-                                                            {item.price.toLocaleString()}đ
-                                                            <span className="unit">/ {item.unit}</span>
-                                                        </h5>
+                                            </Link>
+                                            <div className="price-and-cart">
+                                                <div className="price-box">
+                                                    <h5 className="price-sale">
+                                                        {item.price.toLocaleString()}đ
+                                                        <span className="unit">/ {item.unit}</span>
+                                                    </h5>
 
-                                                        {item.original_price && (
-                                                            <span className="price-original">
-                                                                {item.original_price.toLocaleString()}đ
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                    <a href="#" className="add-to-cart-btn">
-                                                        <i className="fa fa-shopping-cart" />
-                                                    </a>
+                                                    {item.original_price && (
+                                                        <span className="price-original">
+                                                            {item.original_price.toLocaleString()}đ
+                                                        </span>
+                                                    )}
                                                 </div>
+                                                <button className="add-to-cart-btn"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        addToCart(item, 1);
+                                                        toast.success("Đã thêm vào giỏ hàng");
+                                                    }}>
+                                                    <i className="fa fa-shopping-cart" />
+                                                </button>
                                             </div>
                                         </div>
-                                    </Link>
+                                    </div>
                                 </div>
                             );
                         })}
@@ -197,8 +190,8 @@ function Home() {
                         {data.imported?.map((item: any) => {
                             return (
                                 <div className="col-5-custom">
-                                    <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
-                                        <div className="featured__item">
+                                    <div className="featured__item">
+                                        <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                                             <div
                                                 className="featured__item__pic"
                                                 style={{
@@ -209,28 +202,37 @@ function Home() {
                                                 }}
                                             >
                                             </div>
-                                            <div className="featured__item__text">
+                                        </Link>
+                                        <div className="featured__item__text">
+                                            <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                                                 <h6>{item.name}</h6>
-                                                <div className="price-and-cart">
-                                                    <div className="price-box">
-                                                        <h5 className="price-sale">
-                                                            {item.price.toLocaleString()}đ
-                                                            <span className="unit"> / {item.unit}</span>
-                                                        </h5>
+                                            </Link>
 
-                                                        {item.original_price && (
-                                                            <span className="price-original">
-                                                                {item.original_price.toLocaleString()}đ
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                    <a href="#" className="add-to-cart-btn">
-                                                        <i className="fa fa-shopping-cart" />
-                                                    </a>
+                                            <div className="price-and-cart">
+                                                <div className="price-box">
+                                                    <h5 className="price-sale">
+                                                        {item.price.toLocaleString()}đ
+                                                        <span className="unit"> / {item.unit}</span>
+                                                    </h5>
+
+                                                    {item.original_price && (
+                                                        <span className="price-original">
+                                                            {item.original_price.toLocaleString()}đ
+                                                        </span>
+                                                    )}
                                                 </div>
+                                                <button className="add-to-cart-btn"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        addToCart(item, 1);
+                                                        toast.success("Đã thêm vào giỏ hàng");
+                                                    }}>
+                                                    <i className="fa fa-shopping-cart" />
+                                                </button>
                                             </div>
                                         </div>
-                                    </Link>
+                                    </div>
                                 </div>
                             );
                         })}
@@ -249,8 +251,8 @@ function Home() {
                         {data.shellfish?.map((item: any) => {
                             return (
                                 <div className="col-5-custom">
-                                    <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
-                                        <div className="featured__item">
+                                    <div className="featured__item">
+                                        <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                                             <div
                                                 className="featured__item__pic"
                                                 style={{
@@ -261,28 +263,36 @@ function Home() {
                                                 }}
                                             >
                                             </div>
-                                            <div className="featured__item__text">
+                                        </Link>
+                                        <div className="featured__item__text">
+                                            <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                                                 <h6>{item.name}</h6>
-                                                <div className="price-and-cart">
-                                                    <div className="price-box">
-                                                        <h5 className="price-sale">
-                                                            {item.price.toLocaleString()}đ
-                                                            <span className="unit"> / {item.unit}</span>
-                                                        </h5>
+                                            </Link>
+                                            <div className="price-and-cart">
+                                                <div className="price-box">
+                                                    <h5 className="price-sale">
+                                                        {item.price.toLocaleString()}đ
+                                                        <span className="unit"> / {item.unit}</span>
+                                                    </h5>
 
-                                                        {item.original_price && (
-                                                            <span className="price-original">
-                                                                {item.original_price.toLocaleString()}đ
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                    <a href="#" className="add-to-cart-btn">
-                                                        <i className="fa fa-shopping-cart" />
-                                                    </a>
+                                                    {item.original_price && (
+                                                        <span className="price-original">
+                                                            {item.original_price.toLocaleString()}đ
+                                                        </span>
+                                                    )}
                                                 </div>
+                                                <button className="add-to-cart-btn"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        addToCart(item, 1);
+                                                        toast.success("Đã thêm vào giỏ hàng");
+                                                    }}>
+                                                    <i className="fa fa-shopping-cart" />
+                                                </button>
                                             </div>
                                         </div>
-                                    </Link>
+                                    </div>
                                 </div>
                             );
                         })}
@@ -302,8 +312,8 @@ function Home() {
                         {data.crab?.map((item: any) => {
                             return (
                                 <div className="col-5-custom">
-                                    <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
-                                        <div className="featured__item">
+                                    <div className="featured__item">
+                                        <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                                             <div
                                                 className="featured__item__pic"
                                                 style={{
@@ -314,28 +324,36 @@ function Home() {
                                                 }}
                                             >
                                             </div>
-                                            <div className="featured__item__text">
+                                        </Link>
+                                        <div className="featured__item__text">
+                                            <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                                                 <h6>{item.name}</h6>
-                                                <div className="price-and-cart">
-                                                    <div className="price-box">
-                                                        <h5 className="price-sale">
-                                                            {item.price.toLocaleString()}đ
-                                                            <span className="unit"> / {item.unit}</span>
-                                                        </h5>
+                                            </Link>
+                                            <div className="price-and-cart">
+                                                <div className="price-box">
+                                                    <h5 className="price-sale">
+                                                        {item.price.toLocaleString()}đ
+                                                        <span className="unit"> / {item.unit}</span>
+                                                    </h5>
 
-                                                        {item.original_price && (
-                                                            <span className="price-original">
-                                                                {item.original_price.toLocaleString()}đ
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                    <a href="#" className="add-to-cart-btn">
-                                                        <i className="fa fa-shopping-cart" />
-                                                    </a>
+                                                    {item.original_price && (
+                                                        <span className="price-original">
+                                                            {item.original_price.toLocaleString()}đ
+                                                        </span>
+                                                    )}
                                                 </div>
+                                                <button className="add-to-cart-btn"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        addToCart(item, 1);
+                                                        toast.success("Đã thêm vào giỏ hàng");
+                                                    }}>
+                                                    <i className="fa fa-shopping-cart" />
+                                                </button>
                                             </div>
                                         </div>
-                                    </Link>
+                                    </div>
                                 </div>
                             );
                         })}
@@ -354,8 +372,8 @@ function Home() {
                         {data.shrimp?.map((item: any) => {
                             return (
                                 <div className="col-5-custom">
-                                    <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
-                                        <div className="featured__item">
+                                    <div className="featured__item">
+                                        <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                                             <div
                                                 className="featured__item__pic"
                                                 style={{
@@ -366,28 +384,36 @@ function Home() {
                                                 }}
                                             >
                                             </div>
-                                            <div className="featured__item__text">
+                                        </Link>
+                                        <div className="featured__item__text">
+                                            <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                                                 <h6>{item.name}</h6>
-                                                <div className="price-and-cart">
-                                                    <div className="price-box">
-                                                        <h5 className="price-sale">
-                                                            {item.price.toLocaleString()}đ
-                                                            <span className="unit"> / {item.unit}</span>
-                                                        </h5>
+                                            </Link>
+                                            <div className="price-and-cart">
+                                                <div className="price-box">
+                                                    <h5 className="price-sale">
+                                                        {item.price.toLocaleString()}đ
+                                                        <span className="unit"> / {item.unit}</span>
+                                                    </h5>
 
-                                                        {item.original_price && (
-                                                            <span className="price-original">
-                                                                {item.original_price.toLocaleString()}đ
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                    <a href="#" className="add-to-cart-btn">
-                                                        <i className="fa fa-shopping-cart" />
-                                                    </a>
+                                                    {item.original_price && (
+                                                        <span className="price-original">
+                                                            {item.original_price.toLocaleString()}đ
+                                                        </span>
+                                                    )}
                                                 </div>
+                                                <button className="add-to-cart-btn"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        addToCart(item, 1);
+                                                        toast.success("Đã thêm vào giỏ hàng");
+                                                    }}>
+                                                    <i className="fa fa-shopping-cart" />
+                                                </button>
                                             </div>
                                         </div>
-                                    </Link>
+                                    </div>
                                 </div>
                             );
                         })}

@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import CategoryDropdown from "../../components/category/CategoryDropDown";
 import { productService } from "../../services/user/productService";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import Hero from "../../components/hero/Hero";
 
 function ShopGrid() {
     const [products, setProducts] = useState<any[]>([]);
+    const [searchParams] = useSearchParams();
+    const keyword = searchParams.get("keyword");
     const categories = [
         { name: "Bán chạy nhất", path: "/category/ban-chay-nhat" },
         { name: "Hải sản đông lạnh", path: "/category/hai-san-dong-lanh-moi" },
@@ -18,47 +21,27 @@ function ShopGrid() {
         { name: "Mực", path: "/category/muc-tuoi-moi-ngay" },
     ];
 
+
     useEffect(() => {
         const fetchCategory = async () => {
-            const res = await productService.getAll();
-            console.log(res.data);
+            let res;
+            if (keyword) {
+                res = await productService.search(keyword);
+            } else {
+                res = await productService.getAll();
+            }
+            const products =
+                res.data.data || res.data.products?.data || [];
 
-            setProducts(res.data.products.data);
+            setProducts(products);
         };
 
         fetchCategory();
-    }, []);
+    }, [keyword]);
 
     return (
         <>
-            <section className="hero">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-lg-3">
-                            <CategoryDropdown items={categories} />
-                        </div>
-                        <div className="col-lg-9">
-                            <div className="hero__search">
-                                <div className="hero__search__form">
-                                    <form action="#">
-                                        <input type="text" placeholder="Bạn muốn mua gì?" />
-                                        <button type="submit" className="site-btn">Tìm kiếm</button>
-                                    </form>
-                                </div>
-                                <div className="hero__search__phone">
-                                    <div className="hero__search__phone__icon">
-                                        <i className="fa fa-phone" />
-                                    </div>
-                                    <div className="hero__search__phone__text">
-                                        <h5>09090909</h5>
-                                        <span>Hỗ trợ 24/7</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <Hero categories={categories} />
             <div>
                 <div className="breadcrumb-gray">
                     <div className="container">

@@ -52,6 +52,7 @@ function App() {
           <Route path="/shoping-cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-success" element={<OrderSuccess />} />
+          
 
           {/* <Route path="contact" element={<Contact />} /> */}
         </Route>

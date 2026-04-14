@@ -5,11 +5,20 @@ import '../assets/main/css/nice-select.css';
 import '../assets/main/css/owl.carousel.min.css';
 import '../assets/main/css/slicknav.min.css';
 import '../assets/main/css/style.css';
+import { useCart } from '../context/CartContext';
+import { useEffect, useState } from 'react';
+import { productService } from '../services/user/productService';
 
 function MainLayout() {
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("user");
+
+    const { cartItems, removeItem } = useCart();
+
+    const [keyword, setKeyword] = useState("");
+    const [results, setResults] = useState<any[]>([]);
+    const [showDropdown, setShowDropdown] = useState(false);
 
     function handleLogout() {
         localStorage.removeItem("token");
@@ -40,6 +49,25 @@ function MainLayout() {
             );
         }
     }
+
+    useEffect(() => {
+        if (!keyword.trim()) {
+            setResults([]);
+            return;
+        }
+        const timeout = setTimeout(async () => {
+            try {
+                const res = await productService.search(keyword);
+                setResults(res.data.data);
+                setShowDropdown(true);
+            } catch (err) {
+                console.log(err);
+            }
+        }, 300);
+        return () => clearTimeout(timeout);
+    }, [keyword]);
+
+    
     return (
         <>
             <header className="header">
@@ -92,7 +120,55 @@ function MainLayout() {
                         <div className="col-lg-3">
                             <div className="header__cart">
                                 <ul>
-                                    <li><Link to="/shoping-cart"><i className="fa fa-shopping-cart" /><span>3</span></Link></li>
+                                    <li className="cart-hover">
+                                        <Link to="/shoping-cart">
+                                            <i className="fa fa-shopping-cart" />
+                                            <span>{cartItems.length}</span>
+                                        </Link>
+
+                                        <div className="cart-dropdown">
+                                            {cartItems.length === 0 ? (
+                                                <p className="empty-cart">Giỏ hàng trống</p>
+                                            ) : (
+                                                <>
+                                                    {cartItems.map(item => (
+                                                        <div className="cart-item" key={item.id}>
+                                                            <img
+                                                                src={`http://127.0.0.1:8000/${item.image}`}
+                                                                alt=""
+                                                            />
+                                                            <div className="cart-info">
+                                                                <p>{item.name}</p>
+                                                                <span>
+                                                                    {item.price.toLocaleString()}đ x{item.quantity}
+                                                                </span>
+                                                            </div>
+                                                            <div className="cart-remove"
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    e.stopPropagation();
+                                                                    removeItem(item.id);
+                                                                }}>
+                                                                <i className="fa fa-trash" />
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    <div className="cart-total">
+                                                        Tổng tiền:{" "}
+                                                        <p>
+                                                            {cartItems
+                                                                .reduce((sum, i) => sum + i.price * i.quantity, 0)
+                                                                .toLocaleString()}đ
+                                                        </p>
+                                                    </div>
+
+                                                    <Link to="/shoping-cart" className="view-cart-btn">
+                                                        Xem giỏ hàng
+                                                    </Link>
+                                                </>
+                                            )}
+                                        </div>
+                                    </li>
                                 </ul>
                             </div>
                         </div>

@@ -181,14 +181,12 @@ class ProductController extends Controller
         ]);
 
         $slug = Str::slug($validated['name']);
-$originalSlug = $slug;
-$i = 1;
-
-while (Product::where('slug', $slug)->exists()) {
-    $slug = $originalSlug . '-' . $i++;
-}
-
-$validated['slug'] = $slug;
+        $originalSlug = $slug;
+        $i = 1;
+        while (Product::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $i++;
+        }
+        $validated['slug'] = $slug;
         $product = Product::create($validated);
 
         // Handle images
@@ -231,9 +229,10 @@ $validated['slug'] = $slug;
         ]);
 
         //sua
-if ($request->has('name') && !$request->has('slug')) {
-    $validated['slug'] = Str::slug($validated['name']);
-}
+    
+        if ($request->has('name') && !$request->has('slug')) {
+            $validated['slug'] = Str::slug($validated['name']);
+        }
 
         $product->update($validated);
 
@@ -285,5 +284,18 @@ if ($request->has('name') && !$request->has('slug')) {
         $product->delete();
 
         return response()->json(['success' => true, 'message' => 'Đã xóa sản phẩm']);
+    }
+
+    public function search(Request $request)
+    {
+    $keyword = $request->q;
+    $products = Product::where('name', 'like', "%$keyword%")
+        ->with('images')
+        ->limit(10)
+        ->get();
+
+        return response()->json([
+            'data' => $products
+        ]);
     }
 }

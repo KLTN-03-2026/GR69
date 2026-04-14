@@ -77,6 +77,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/orders/{id}', [OrderController::class, 'adminShow']);
     Route::put('/orders/{id}/cancel', [OrderController::class, 'cancel']);
     
+
+    //product
+    Route::get('/search', [ProductController::class, 'search']);
     // Reviews
     Route::post('/reviews', [ReviewController::class, 'store']);
 

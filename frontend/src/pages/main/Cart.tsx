@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import CategoryDropdown from "../../components/category/CategoryDropDown";
 import { useCart } from "../../context/CartContext";
+import Hero from "../../components/hero/Hero";
 
 function Cart() {
     const categories = [
@@ -28,34 +29,7 @@ function Cart() {
     const shippingFee = 30000;
     return (
         <>
-            <section className="hero">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-lg-3">
-                            <CategoryDropdown items={categories} />
-                        </div>
-                        <div className="col-lg-9">
-                            <div className="hero__search">
-                                <div className="hero__search__form">
-                                    <form action="#">
-                                        <input type="text" placeholder="Bạn muốn mua gì?" />
-                                        <button type="submit" className="site-btn">Tìm kiếm</button>
-                                    </form>
-                                </div>
-                                <div className="hero__search__phone">
-                                    <div className="hero__search__phone__icon">
-                                        <i className="fa fa-phone" />
-                                    </div>
-                                    <div className="hero__search__phone__text">
-                                        <h5>09090909</h5>
-                                        <span>Hỗ trợ 24/7</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <Hero categories={categories} />
             <div>
                 <div className="breadcrumb-gray">
                     <div className="container">
