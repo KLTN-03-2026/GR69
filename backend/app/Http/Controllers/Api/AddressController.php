@@ -15,6 +15,15 @@ class AddressController extends Controller
         return response()->json(['success' => true, 'addresses' => $addresses]);
     }
 
+    public function show(Request $request, $id)
+    {
+        $address = $request->user()->addresses()->findOrFail($id);
+        return response()->json([
+            'success' => true,
+            'address' => $address
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

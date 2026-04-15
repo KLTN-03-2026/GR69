@@ -38,6 +38,7 @@ import Cart from './pages/main/Cart';
 import Checkout from './pages/main/Checkout';
 import OrderSuccess from './pages/main/OrderSuccess';
 import MyDetailOrder from './pages/main/profile/MyDetailOrder';
+import EditMyAddress from './pages/main/profile/EditMyAddress';
 
 
 function App() {
@@ -89,6 +90,7 @@ function App() {
           <Route path="order-detail/:id" element={<MyDetailOrder />} />
           <Route path="my-address" element={<MyAddress />} />
           <Route path="add-address" element={<AddMyAddress />} />
+          <Route path="edit-address/:id" element={<EditMyAddress />} />
           <Route path="my-info" element={<MyInfor />} />
           <Route path="my-password" element={<MyPassword />} />
         </Route>

@@ -1,11 +1,12 @@
 import { useParams } from "react-router-dom";
-import CategoryDropdown from "../../components/category/CategoryDropDown";
 import { useEffect, useState } from "react";
 import { productService } from "../../services/user/productService";
 import { useCart } from "../../context/CartContext";
 import Hero from "../../components/hero/Hero";
+import { reviewService } from "../../services/user/reviewService";
 
 function ProductDetail() {
+    const { addToCart } = useCart();
     const categories = [
         { name: "Bán chạy nhất", path: "/category/ban-chay-nhat" },
         { name: "Hải sản đông lạnh", path: "/category/hai-san-dong-lanh-moi" },
@@ -23,33 +24,40 @@ function ProductDetail() {
     const [mainImage, setMainImage] = useState<string>("");
     const [quantity, setQuantity] = useState(1);
     const [activeTab, setActiveTab] = useState("description");
+    const [reviews, setReviews] = useState<any[]>([]);
 
     useEffect(() => {
         const fetchProduct = async () => {
             if (!slug) return;
 
-            const res = await productService.getBySlug(slug);
-            setProduct(res.data.product);
-            console.log(res.data.product);
+            try {
+                const res = await productService.getBySlug(slug);
+                const productData = res.data.product;
 
-            setMainImage(res.data.product.images?.[0]?.image_path);
+                setProduct(productData);
+                setMainImage(productData.images?.[0]?.image_path);
+
+                const reviewRes = await reviewService.getByProduct(productData.id);
+                setReviews(reviewRes.data.reviews);
+                console.log(reviewRes.data);
+
+            } catch (err) {
+                console.log("Lỗi load product");
+            }
         };
 
         fetchProduct();
     }, [slug]);
-    if (!product) return <div>Loading...</div>;
 
+    if (!product) return <div>Loading...</div>;
     const increaseQty = () => {
         setQuantity((prev) => prev + 1);
     };
-
     const decreaseQty = () => {
         setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
     };
 
-    const { addToCart } = useCart();
-
-
+    const avgRating = reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : 0;
     return (
         <>
             <Hero categories={categories} />
@@ -168,54 +176,41 @@ function ProductDetail() {
                                             <div className="review-wrapper">
                                                 <h4 className="review-title">Đánh giá của khách hàng</h4>
                                                 <div className="review-overall">
-                                                    <i className="fa fa-star" />
-                                                    <i className="fa fa-star" />
-                                                    <i className="fa fa-star" />
-                                                    <i className="fa fa-star" />
-                                                    <i className="fa fa-star-half-o" />
-                                                    <span>( 95 Reviews )</span>
+                                                    <span>{avgRating} / 5</span>
+                                                    <span> ({reviews.length} đánh giá)</span>
                                                 </div>
                                                 <div className="review-list">
-                                                    <div className="review-item">
-                                                        <img src="https://via.placeholder.com/60?text=Image" alt="Avatar" className="review-avatar" />
-                                                        <div className="review-content">
-                                                            <div className="review-meta">
-                                                                <h5>Adam Smit</h5>
-                                                                <span className="review-date">September 3, 2020</span>
+                                                    {reviews.length === 0 ? (
+                                                        <p>Chưa có đánh giá nào</p>
+                                                    ) : (
+                                                        reviews.map((item) => (
+                                                            <div className="review-item" key={item.id}>
+                                                                <img
+                                                                    src={`http://127.0.0.1:8000/${item.user.avatar}` || "https://via.placeholder.com/60"}
+                                                                    alt="Avatar"
+                                                                    className="review-avatar"
+                                                                />
+                                                                <div className="review-content">
+                                                                    <div className="review-meta">
+                                                                        <h5>{item.user?.name}</h5>
+                                                                        <span className="review-date">
+                                                                            {new Date(item.created_at).toLocaleDateString("vi-VN")}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="review-stars">
+                                                                        {[1, 2, 3, 4, 5].map((star) => (
+                                                                            <i
+                                                                                key={star}
+                                                                                className={`fa ${star <= item.rating ? "fa-star" : "fa-star-o"
+                                                                                    }`}
+                                                                            />
+                                                                        ))}
+                                                                    </div>
+                                                                    <p className="review-text">{item.comment}</p>
+                                                                </div>
                                                             </div>
-                                                            <div className="review-stars">
-                                                                <i className="fa fa-star" />
-                                                                <i className="fa fa-star" />
-                                                                <i className="fa fa-star" />
-                                                                <i className="fa fa-star" />
-                                                                <i className="fa fa-star-o" />
-                                                            </div>
-                                                            <p className="review-text">
-                                                                Hải sản rất tươi ngon, giao hàng cực kỳ nhanh chóng. Rất hài lòng
-                                                                với dịch vụ của shop!
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div className="review-item">
-                                                        <img src="https://via.placeholder.com/60?text=User2" alt="Avatar" className="review-avatar" />
-                                                        <div className="review-content">
-                                                            <div className="review-meta">
-                                                                <h5>Nguyễn Văn A</h5>
-                                                                <span className="review-date">October 15, 2023</span>
-                                                            </div>
-                                                            <div className="review-stars">
-                                                                <i className="fa fa-star" />
-                                                                <i className="fa fa-star" />
-                                                                <i className="fa fa-star" />
-                                                                <i className="fa fa-star" />
-                                                                <i className="fa fa-star" />
-                                                            </div>
-                                                            <p className="review-text">
-                                                                Bào ngư dai giòn sần sật, nấu cháo cho các bé ăn rất tốt. Mọi người
-                                                                nên mua thử nhé.
-                                                            </p>
-                                                        </div>
-                                                    </div>
+                                                        ))
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

@@ -88,7 +88,7 @@ function MyAddress() {
                                 <td>{item.address}</td>
                                 <td>{item.phone}</td>
 
-                                <td>
+                                <td style={{ minWidth: "120px" }}>
                                     {item.is_default ? (
                                         <span className="badge-default">
                                             Mặc định
@@ -102,15 +102,23 @@ function MyAddress() {
                                         </button>
                                     )}
                                 </td>
-
                                 <td>
-                                    <button
-                                        className="btn btn-delete"
-                                        style={{ backgroundColor: "red" }}
-                                        onClick={() => handleDelete(item.id)}
-                                    >
-                                        Xóa
-                                    </button>
+                                    <div className="d-flex gap-2">
+                                        <Link
+                                            to={`/account/edit-address/${item.id}`}
+                                            className="btn btn-warning"
+                                        >
+                                            Sửa
+                                        </Link>
+
+                                        <button
+                                            className="btn btn-delete"
+                                            style={{ backgroundColor: "red" }}
+                                            onClick={() => handleDelete(item.id)}
+                                        >
+                                            Xóa
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         ))}

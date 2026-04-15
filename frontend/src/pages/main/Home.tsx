@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom";
 import CategorySlider from "../../components/category/CategorySlider";
 import FlashSale from "../../components/flashsale/FlashSale";
-import HeroSlider from "../../components/hero/HeroSlider";
 import { useEffect, useState } from "react";
 import { productService } from "../../services/user/productService";
-import CategoryDropdown from "../../components/category/CategoryDropDown";
 import { useCart } from "../../context/CartContext";
 import { toast } from "react-toastify";
 import Hero from "../../components/hero/Hero";

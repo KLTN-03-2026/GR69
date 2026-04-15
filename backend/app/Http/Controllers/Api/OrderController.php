@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Coupon;
+use App\Models\Review;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -26,6 +27,13 @@ class OrderController extends Controller
         $order = $request->user()->orders()
             ->with('items.product.images')
             ->findOrFail($id);
+
+        foreach ($order->items as $item) {
+            $item->reviewed = Review::where('user_id', $request->user()->id)
+            ->where('product_id', $item->product_id)
+            ->where('order_id', $order->id)
+            ->exists();
+        }
 
         return response()->json(['success' => true, 'order' => $order]);
     }

@@ -24,27 +24,53 @@ class ReviewController extends Controller
     {
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
+            'order_id' => 'required|exists:orders,id',
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'nullable|string|max:1000',
         ]);
 
         $user = $request->user();
 
+        $order = $user->orders()
+        ->where('id', $validated['order_id'])
+        ->where('status', 'delivered')
+        ->first();
+        
+        if (!$order) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đơn hàng không hợp lệ hoặc chưa hoàn thành',
+            ], 403);
+        }
+
+        $hasProduct = $order->items()
+        ->where('product_id', $validated['product_id'])
+        ->exists();
+        
+        if (!$hasProduct) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sản phẩm không thuộc đơn hàng này',
+            ], 403);
+        }
+
         // Check if user already reviewed this product
         $existing = Review::where('user_id', $user->id)
             ->where('product_id', $validated['product_id'])
-            ->first();
+            ->where('order_id', $validated['order_id'])
+            ->exists();
 
         if ($existing) {
             return response()->json([
                 'success' => false,
-                'message' => 'Bạn đã đánh giá sản phẩm này rồi',
+                'message' => 'Bạn đã đánh giá sản phẩm trong đơn này rồi',
             ], 422);
         }
 
         $review = Review::create([
             'product_id' => $validated['product_id'],
             'user_id' => $user->id,
+            'order_id' => $validated['order_id'],
             'rating' => $validated['rating'],
             'comment' => $validated['comment'] ?? null,
             'status' => 'approved', // Auto-approve for now
@@ -52,7 +78,9 @@ class ReviewController extends Controller
 
         // Update product rating
         $product = Product::find($validated['product_id']);
-        $product->updateRating();
+        if ($product) {
+            $product->updateRating();
+        }
 
         return response()->json([
             'success' => true,

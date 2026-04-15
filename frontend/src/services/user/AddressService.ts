@@ -6,6 +6,9 @@ export const addressService = {
         return axiosClient.get("/addresses");
     },
 
+    getById(id: number) {
+        return axiosClient.get(`/addresses/${id}`);
+    },
     create(data: {
         name: string;
         phone: string;

@@ -1417,6 +1417,74 @@ ol {
 	cursor: pointer;
 }
 
+
+.review-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.review-box {
+    background: #fff;
+    padding: 20px;
+    width: 600px;
+    border-radius: 10px;
+}
+
+.rating .star {
+    font-size: 24px;
+    cursor: pointer;
+    color: #ccc;
+}
+
+.rating .star.active {
+    color: orange;
+}
+
+textarea {
+    width: 100%;
+    height: 80px;
+    margin-top: 10px;
+}
+
+.review-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+.review-actions button {
+    outline: none;
+    border: none;
+	padding: 8px;
+	border-radius: 3px;
+}
+.review-product {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.review-product img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.review-product-info .name {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
 /*end shop detail*/
 
 
@@ -2009,6 +2077,18 @@ ol {
     margin-bottom: 10px;
     border-radius: 6px;
     cursor: pointer;
+}
+.address-item {
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.address-actions {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
 }
 
 .form-control {
@@ -3096,7 +3176,6 @@ ol {
 
 .btn-delete {
 	background-color: #df4759;
-	/* Màu đỏ */
 	color: #fff;
 	border: none;
 	padding: 8px 20px;

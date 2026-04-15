@@ -85,6 +85,10 @@ function Checkout() {
         }
     };
 
+    const handleEditAddress = (id: number) => {
+        navigate(`/account/edit-address/${id}`);
+    };
+
     const handlePlaceOrder = async () => {
         if (!selectedAddressId) return;
 
@@ -143,27 +147,42 @@ function Checkout() {
                                 </div>
                             </div>
                             <form>
-                                {addresses.map(addr => (
-                                    <label key={addr.id} className="address-radio">
-                                        <input
-                                            type="radio"
-                                            name="address"
-                                            checked={selectedAddressId === addr.id}
-                                            onChange={() => setSelectedAddressId(addr.id)}
-                                        />
-                                        <div>
-                                            <strong>{addr.name}</strong> - {addr.phone}
-                                            <div>{addr.address}</div>
-                                        </div>
-                                    </label>
-                                ))}
-
                                 {addresses.length === 0 && (
-                                    <div>
-                                        Bạn chưa có địa chỉ nào.
-                                        <a href="/account/add-address">Thêm địa chỉ</a>
+                                    <div className="no-address">
+                                        <p>Bạn chưa có địa chỉ nào.</p>
+                                        <button
+                                            className="btn btn-primary"
+                                            onClick={() => navigate("/account/add-address")}
+                                        >
+                                            + Thêm địa chỉ mới
+                                        </button>
                                     </div>
                                 )}
+                                {addresses.map(addr => (
+                                    <div key={addr.id} className="address-item">
+                                        <label className="address-radio">
+                                            <input
+                                                type="radio"
+                                                name="address"
+                                                checked={selectedAddressId === addr.id}
+                                                onChange={() => setSelectedAddressId(addr.id)}
+                                            />
+                                            <div>
+                                                <strong>{addr.name}</strong> - {addr.phone}
+                                                <div>{addr.address}</div>
+                                            </div>
+                                        </label>
+
+                                        <div className="address-actions">
+                                            <button type="button"
+                                                className="btn btn-sm btn-warning"
+                                                onClick={() => handleEditAddress(addr.id)}
+                                            >
+                                                Cập nhật
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
                             </form>
                         </div>
                         <div className="checkout-box">
@@ -197,19 +216,16 @@ function Checkout() {
                                         className="cart-img"
                                         alt={item.name}
                                     />
-
                                     <div className="cart-info">
                                         <div className="cart-title">
                                             <span>{item.name}</span>
                                         </div>
-
                                         <div className="cart-price-qty">
                                             <div>
                                                 <span className="price-new">
                                                     {item.price.toLocaleString()}đ
                                                 </span>
                                             </div>
-
                                             <div>
                                                 x {item.quantity}
                                             </div>
