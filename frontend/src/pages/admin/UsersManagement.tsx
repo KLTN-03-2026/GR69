@@ -24,7 +24,6 @@ function UsersManagement() {
                     <table className="table table-custom align-middle mb-0 user-table">
                         <thead className="bg-light-gray">
                             <tr>
-                                <th style={{ width: "8%" }} className="text-center">Avatar</th>
                                 <th style={{ width: "15%" }}>Tên</th>
                                 <th style={{ width: "20%" }}>Email</th>
                                 <th style={{ width: "12%" }}>Số điện thoại</th>
@@ -36,9 +35,6 @@ function UsersManagement() {
                             {data.map((user) => {
                                 return (
                                     <tr key={user.id}>
-                                        <td className="text-center">
-                                            <img src="https://i.pravatar.cc/150?img=11" alt="Avatar" className="avatar-table" />
-                                        </td>
                                         <td className="fw-bold text-dark">{user.name}</td>
                                         <td className="text-muted">{user.email}</td>
                                         <td className="text-dark">{user.phone}</td>

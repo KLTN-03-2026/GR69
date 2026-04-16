@@ -51,8 +51,8 @@ function VouchersManagement() {
                                 <th style={{ width: "15%" }}>số lượt tối đa</th>
                                 <th style={{ width: "20%" }}>Ngày hết hạn</th>
                                 <th style={{ width: "20%" }}>Trạng thái</th>
-                                <th style={{ width: "20%" }} className="text-center"></th>
-                                <th style={{ width: "20%" }} className="text-center"></th>
+                                <th style={{ width: "15%" }} className="text-center"></th>
+                                <th style={{ width: "15%" }} className="text-center"></th>
 
                             </tr>
                         </thead>
@@ -67,9 +67,9 @@ function VouchersManagement() {
                                         <td>
                                             {value.type === "percent"
                                                 ? `${value.value}%`
-                                                : Number(value.value).toLocaleString() + "đ"}
+                                                : Number(value.value).toLocaleString()}đ
                                         </td>
-                                        <td>{value.min_order}</td>
+                                        <td>{Number(value.min_order).toLocaleString()}đ</td>
                                         <td>{value.max_uses}</td>
                                         <td>
                                             {value.expires_at
@@ -82,13 +82,13 @@ function VouchersManagement() {
                                         <td className="text-center">
                                             <Link to={`/admin/edit-voucher/${value.id}`}>
                                                 <button className="btn btn-action-large btn-edit-square">
-                                                    <i className="fa-solid fa-pen-to-square" /><br />Chỉnh sửa
+                                                    <i className="fa-solid fa-pen-to-square" />
                                                 </button>
                                             </Link>
                                         </td>
                                         <td className="text-center">
                                             <button className="btn btn-action-large btn-delete-square" onClick={() => handleDelete(value.id)}>
-                                                <i className="fa-solid fa-trash-can" /><br />Xóa
+                                                <i className="fa-solid fa-trash-can" />
                                             </button>
                                         </td>
                                     </tr>

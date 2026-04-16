@@ -215,77 +215,65 @@ body {
 }
 
 /* --- CARDS --- */
-.stat-card {
-    border-radius: 6px;
-    padding: 25px 20px;
-    color: white;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    height: 100%;
-}
-
-.stat-card h6 {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-    opacity: 0.9;
-}
-
-.stat-card h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0;
-}
-
-.bg-blue {
-    background: #3b82f6;
-}
-
-.bg-green {
-    background: #22c55e;
-}
-
-.bg-yellow {
-    background: #eab308;
-}
-
-.bg-purple {
-    background: #a855f7;
-}
-
-/* --- ACTIVITY PANEL --- */
-.activity-panel {
-    background-color: #ffffff;
+.stat-card.modern {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 18px;
+    background: #fff;
     border-radius: 12px;
-    padding: 25px 30px;
-    margin: 10px 30px 30px 30px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    border: 1px solid #f3f4f6;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
 }
 
-.activity-panel h5 {
-    font-size: 1rem;
+.stat-card.modern:hover {
+    transform: translateY(-3px);
+}
+
+/* ICON */
+.stat-card .icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+/* COLORS */
+.icon.blue {
+    background: rgba(59,130,246,0.15);
+    color: #3b82f6;
+}
+
+.icon.green {
+    background: rgba(34,197,94,0.15);
+    color: #22c55e;
+}
+
+.icon.yellow {
+    background: rgba(234,179,8,0.15);
+    color: #eab308;
+}
+
+.icon.purple {
+    background: rgba(168,85,247,0.15);
+    color: #a855f7;
+}
+
+/* CONTENT */
+.stat-card .content h2 {
+    font-size: 20px;
     font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 20px;
-}
-
-.activity-panel ul {
-    list-style-type: disc;
-    padding-left: 20px;
-    color: #4b5563;
-    line-height: 2.2;
-    font-size: 0.95rem;
     margin: 0;
 }
 
-.activity-panel span.val-black {
-    color: #111827;
-    font-weight: 600;
-}
-
-.activity-panel span.val-red {
-    color: #ef4444;
-    font-weight: 600;
+.stat-card .content p {
+    margin: 0;
+    font-size: 13px;
+    color: #6b7280;
+    text-transform: uppercase;
 }
 
 /* --- PRODUCT MANAGER STYLES --- */
@@ -338,6 +326,13 @@ body {
     font-size: 0.95rem;
     background-color: #f4f5f7;
     /* Nền xám nhạt cho toàn bảng */
+}
+
+.data-table-custom img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
 }
 
 .data-table-custom th,
@@ -869,4 +864,150 @@ body {
     width: 22px;
     height: 22px;
     cursor: pointer;
+}
+
+
+/*dashboard*/
+.dashboard-section {
+    background: #fff;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-section h5 {
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.list-box {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    margin-bottom: 8px;
+    background: #f9fafb;
+}
+
+
+.list-item .name {
+    font-weight: 500;
+    color: #333;
+}
+
+.list-item .value {
+    font-weight: 600;
+    color: #007bff;
+}
+
+.dashboard-section:last-child .value {
+    color: #007bff;
+}
+.chart-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.chart-header select {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    outline: none;
+    cursor: pointer;
+}
+
+
+.product-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #6b7280;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 6px;
+}
+
+.product-header .right {
+    display: flex;
+    gap: 40px;
+}
+
+.product-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 12px 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.product-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.product-info img {
+    width: 55px;
+    height: 55px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.product-info .name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.product-info .category {
+    font-size: 12px;
+    color: #888;
+}
+
+.product-stats {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.product-stats .revenue {
+    font-weight: 600;
+    color: #111;
+}
+
+.product-stats .percent {
+    font-weight: 600;
+    color: #3b82f6;
+}
+
+.doughnut-wrapper {
+    width: 300px; 
+    height: 300px;
+    margin: 0 auto;
 }

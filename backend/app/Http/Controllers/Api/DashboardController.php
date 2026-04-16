@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $totalRevenue = Order::where('status', 'delivered')->sum('total_amount');
         $totalOrders = Order::count();
@@ -30,12 +30,18 @@ class DashboardController extends Controller
             ->get();
 
         // Top selling products
-        $topProducts = Product::withCount(['orderItems as units_sold' => function ($q) {
-                $q->select(DB::raw('COALESCE(SUM(quantity), 0)'));
-            }])
-            ->orderByDesc('units_sold')
-            ->limit(5)
-            ->get();
+
+        $topProducts = Product::with('category:id,name')
+        ->withCount(['orderItems as units_sold' => function ($q) {
+            $q->select(DB::raw('COALESCE(SUM(quantity), 0)'));
+        }])
+        ->withSum(['orderItems as revenue' => function ($q) {
+            $q->join('orders', 'orders.id', '=', 'order_items.order_id')
+            ->where('orders.status', 'delivered');
+        }], DB::raw('quantity * price'))
+        ->orderByDesc('units_sold')
+        ->limit(5)
+        ->get();
 
         // Revenue by month (last 6 months)
         $monthlyRevenue = Order::where('status', 'delivered')
@@ -49,6 +55,30 @@ class DashboardController extends Controller
             ->orderBy('year')
             ->orderBy('month')
             ->get();
+            
+        $daysInMonth = cal_days_in_month(
+            CAL_GREGORIAN,
+            $request->month ?? now()->month,
+            $request->year ?? now()->year
+        );
+        
+        $dailyRevenueRaw = Order::where('status', 'delivered')
+        ->whereMonth('created_at', $request->month ?? now()->month)
+        ->whereYear('created_at', $request->year ?? now()->year)
+        ->select(
+            DB::raw('DAY(created_at) as day'),
+            DB::raw('SUM(total_amount) as revenue')
+        )
+        ->groupBy('day')
+        ->pluck('revenue', 'day');
+        
+        $dailyRevenue = [];
+        for ($i = 1; $i <= $daysInMonth; $i++) {
+            $dailyRevenue[] = [
+                'day' => $i,
+                'revenue' => $dailyRevenueRaw[$i] ?? 0
+            ];
+        }
 
         // Order status breakdown
         $ordersByStatus = Order::select('status', DB::raw('COUNT(*) as count'))
@@ -69,6 +99,7 @@ class DashboardController extends Controller
             'recent_orders' => $recentOrders,
             'top_products' => $topProducts,
             'monthly_revenue' => $monthlyRevenue,
+            'daily_revenue' => $dailyRevenue,
             'orders_by_status' => $ordersByStatus,
         ]);
     }

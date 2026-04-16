@@ -97,7 +97,6 @@ function AdminLayout() {
                 <div className="main-content">
                     <div className="top-navbar">
                         <div className="sys-title">Hệ thống quản trị cửa hàng hải sản online</div>
-                        <a href="#" className="back-link">← Về trang chủ Website</a>
                     </div>
                     <Outlet />
                 </div>

@@ -5,6 +5,7 @@ export const adminDashboardService = {
   getCustomers: () =>
     axiosClient.get("/admin/customers"),
 
-  dashboard: () =>
-    axiosClient.get("/admin/dashboard"),
+  dashboard(params?: any) {
+    return axiosClient.get("/admin/dashboard", { params });
+  }
 };
