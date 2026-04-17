@@ -12,4 +12,15 @@ export const authService = {
 
   logout: () =>
     axiosClient.post("/logout"),
+
+  forgotPassword: (email: string) =>
+    axiosClient.post("/forgot-password", { email }),
+
+  resetPassword: (data: {
+    token: string;
+    email: string;
+    password: string;
+    password_confirmation: string;
+  }) =>
+    axiosClient.post("/reset-password", data),
 };

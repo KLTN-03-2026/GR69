@@ -39,6 +39,8 @@ import Checkout from './pages/main/Checkout';
 import OrderSuccess from './pages/main/OrderSuccess';
 import MyDetailOrder from './pages/main/profile/MyDetailOrder';
 import EditMyAddress from './pages/main/profile/EditMyAddress';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 
 
 function App() {
@@ -83,6 +85,8 @@ function App() {
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password" element={<ResetPassword />} />
         </Route>
 
         <Route path="/account" element={<AccountLayout />}>

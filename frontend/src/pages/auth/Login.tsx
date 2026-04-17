@@ -101,7 +101,7 @@ function Login() {
                 </div>
                 <button type="submit" className="login-btn">Đăng nhập</button>
                 <div className="extra-links">
-                    <Link to="#">Quên mật khẩu?</Link>
+                    <Link to="/auth/forgot-password">Quên mật khẩu?</Link>
                     <Link to="/auth/register">Tạo tài khoản?</Link>
                 </div>
             </form>
