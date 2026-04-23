@@ -409,8 +409,9 @@ ol {
 	padding: 5px 15px;
 }
 
-.header__menu ul li.active a {
-	color: #4ca7d4;
+.header__menu ul li a.active {
+    color: #4ca7d4;
+    font-weight: bold;
 }
 
 .header__menu ul li:hover .header__menu__dropdown {
@@ -3419,6 +3420,101 @@ textarea {
 
 .btn-text-rate:hover {
 	background-color: #0c9368;
+}
+
+
+/*About us*/
+.about-hero {
+    height: 300px;
+    background: url("img/user-img/about-us-2.jpg") center/cover no-repeat;
+    position: relative;
+}
+
+.about-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+}
+
+.about-hero > div {
+    position: relative;
+    z-index: 2;
+}
+
+.stats-box {
+    background: #f8f9fa;
+    padding: 30px 0;
+    border-radius: 10px;
+}
+
+.stats-box h3 {
+    font-weight: bold;
+    color: #28a745;
+}
+
+.mission-section {
+    padding: 40px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.mission-box {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    transition: 0.3s;
+    border-left: 4px solid #28a745;
+}
+.mission-box ul{
+	padding-left: 0;
+}
+.mission-box li{
+	list-style: none;
+}
+
+.mission-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.mission-img {
+    width: 100%;
+    height: 420px;   
+    object-fit: cover;    
+    border-radius: 12px;
+}
+
+.contact-section {
+    padding: 40px 20px;
+}
+
+.contact-box {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    transition: 0.3s;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.contact-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.contact-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.contact-box h6 {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.contact-box p {
+    margin: 0;
+    color: #666;
 }
 
 

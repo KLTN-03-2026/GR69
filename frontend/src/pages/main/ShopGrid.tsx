@@ -48,7 +48,6 @@ function ShopGrid() {
                     <div className="container">
                         <div className="breadcrumb-inner">
                             <a href="index.html">Trang chủ</a> /
-                            <a href="#">Danh mục</a> /
                             <span>Cửa hàng</span>
                         </div>
                     </div>

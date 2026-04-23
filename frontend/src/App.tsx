@@ -41,6 +41,8 @@ import MyDetailOrder from './pages/main/profile/MyDetailOrder';
 import EditMyAddress from './pages/main/profile/EditMyAddress';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
+import Contact from './pages/main/Contact';
+import AboutUs from './pages/main/AboutUs';
 
 
 function App() {
@@ -55,6 +57,9 @@ function App() {
           <Route path="/shoping-cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-success" element={<OrderSuccess />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/about-us" element={<AboutUs />} />
+
           
 
           {/* <Route path="contact" element={<Contact />} /> */}

@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import CategoryDropdown from "../../components/category/CategoryDropDown";
 import { useCart } from "../../context/CartContext";
 import Hero from "../../components/hero/Hero";
 
@@ -35,8 +34,7 @@ function Cart() {
                     <div className="container">
                         <div className="breadcrumb-inner">
                             <a href="index.html">Trang chủ</a> /
-                            <a href="#">Danh mục</a> /
-                            <span>Cửa hàng</span>
+                            <span>Giỏ hàng</span>
                         </div>
                     </div>
                 </div>

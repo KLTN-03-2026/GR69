@@ -1,4 +1,4 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import '../assets/main/css/font-awesome.min.css';
 import '../assets/main/css/elegant-icons.css';
 import '../assets/main/css/nice-select.css';
@@ -77,10 +77,10 @@ function MainLayout() {
                             <div className="col-lg-12 col-md-12">
                                 <div className="header__top__right">
                                     <div className="header__top__right__social">
-                                        <a href="#"><i className="fa fa-facebook" /></a>
-                                        <a href="#"><i className="fa fa-twitter" /></a>
-                                        <a href="#"><i className="fa fa-linkedin" /></a>
-                                        <a href="#"><i className="fa fa-pinterest-p" /></a>
+                                        <a href="#"><i className="fab fa-facebook" /></a>
+                                        <a href="#"><i className="fab fa-twitter" /></a>
+                                        <a href="#"><i className="fab fa-linkedin" /></a>
+                                        <a href="#"><i className="fab fa-pinterest-p" /></a>
                                     </div>
                                     {renderHeader()}
                                 </div>
@@ -104,8 +104,8 @@ function MainLayout() {
                         <div className="col-lg-6">
                             <nav className="header__menu">
                                 <ul>
-                                    <li className="active"><Link to="/">Trang chủ</Link></li>
-                                    <li><Link to="/shop-grid">Cửa hàng</Link></li>
+                                    <li><NavLink to="/" end className={({ isActive }) => isActive ? "active" : ""}>Trang chủ</NavLink></li>
+                                    <li><NavLink to="/shop-grid" className={({ isActive }) => isActive ? "active" : ""}>Cửa hàng</NavLink></li>
                                     <li><a href="#">Trang</a>
                                         <ul className="header__menu__dropdown">
                                             <li><Link to="/account/my-info">Tài khoản</Link></li>
@@ -113,7 +113,7 @@ function MainLayout() {
                                             <li><Link to="/checkout">Thanh toán</Link></li>
                                         </ul>
                                     </li>
-                                    <li><Link to="/contact">Liên hệ</Link></li>
+                                    <li><NavLink to="/contact" className={({ isActive }) => isActive ? "active" : ""}>Liên hệ</NavLink></li>
                                 </ul>
                             </nav>
                         </div>
@@ -197,7 +197,7 @@ function MainLayout() {
                                 </div>
                                 <ul>
                                     <li>Địa chỉ: 999 Nguyễn Tất Thành, Xuân Hà, Thanh Khê, Đà Nẵng</li>
-                                    <li>Điện thoại: +09090909</li>
+                                    <li>Điện thoại: +0909 999 999</li>
                                     <li>Email: fishmarket@gmail.com</li>
                                 </ul>
                             </div>
@@ -206,7 +206,7 @@ function MainLayout() {
                             <div className="footer__widget">
                                 <h6>Liên kết hữu ích</h6>
                                 <ul>
-                                    <li><Link to="#">Về chúng tôi</Link></li>
+                                    <li><Link to="/about-us">Về chúng tôi</Link></li>
                                     <li><Link to="#">Mua sắm an toàn</Link></li>
                                     <li><Link to="#">Thông tin giao hàng</Link></li>
                                     <li><Link to="#">Chính sách</Link></li>
@@ -223,10 +223,10 @@ function MainLayout() {
                                     <button type="submit" className="site-btn">Đăng ký</button>
                                 </form>
                                 <div className="footer__widget__social">
-                                    <a href="#"><i className="fa fa-facebook" /></a>
-                                    <a href="#"><i className="fa fa-instagram" /></a>
-                                    <a href="#"><i className="fa fa-twitter" /></a>
-                                    <a href="#"><i className="fa fa-pinterest" /></a>
+                                    <a href="#"><i className="fab fa-facebook" /></a>
+                                    <a href="#"><i className="fab fa-instagram" /></a>
+                                    <a href="#"><i className="fab fa-twitter" /></a>
+                                    <a href="#"><i className="fab fa-pinterest" /></a>
                                 </div>
                             </div>
                         </div>

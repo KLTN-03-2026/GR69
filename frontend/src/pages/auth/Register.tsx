@@ -119,7 +119,7 @@ function Register() {
             <h2>Đăng ký</h2>
 
             <div className="input-box">
-                <input type="text" name="name" placeholder="Tên đăng nhập" value={input.name} onChange={handleInput} />
+                <input type="text" name="name" placeholder="Tên người dùng" value={input.name} onChange={handleInput} />
                 {errors.name && <div className="error">{errors.name}</div>}
             </div>
 
