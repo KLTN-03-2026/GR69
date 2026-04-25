@@ -2,6 +2,10 @@ import axiosClient from "../axiosClient";
 
 export const adminProductService = {
 
+    getAll(params?: any) {
+        return axiosClient.get('/products', { params });
+    },
+
     create: (data: FormData) =>
         axiosClient.post("/admin/products", data, {
             headers: {

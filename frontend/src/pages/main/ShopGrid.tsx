@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 
 function ShopGrid() {
     const [products, setProducts] = useState<any[]>([]);
+    const [page, setPage] = useState(1);
+    const [lastPage, setLastPage] = useState(1);
     const { addToCart } = useCart();
     const [searchParams] = useSearchParams();
     const keyword = searchParams.get("keyword");
@@ -24,20 +26,29 @@ function ShopGrid() {
     ];
 
     useEffect(() => {
-        const fetchCategory = async () => {
+        const fetchData = async () => {
             let res;
+
             if (keyword) {
                 res = await productService.search(keyword);
+                setProducts(res.data.data || []);
+                setLastPage(1);
             } else {
-                res = await productService.getAll();
-            }
-            const products =
-                res.data.data || res.data.products?.data || [];
+                res = await productService.getAll({
+                    page,
+                    per_page: 20
+                });
 
-            setProducts(products);
+                setProducts(res.data.products.data);
+                setLastPage(res.data.products.last_page);
+            }
         };
 
-        fetchCategory();
+        fetchData();
+    }, [page, keyword]);
+
+    useEffect(() => {
+        setPage(1);
     }, [keyword]);
 
     return (
@@ -113,6 +124,39 @@ function ShopGrid() {
                                 </div>
                             );
                         })}
+                    </div>
+                    <div className="d-flex justify-content-center mt-4">
+                        <ul className="pagination">
+                            <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
+                                <button
+                                    className="page-link"
+                                    onClick={() => setPage(page - 1)}
+                                >
+                                    Prev
+                                </button>
+                            </li>
+                            {[...Array(lastPage)].map((_, i) => (
+                                <li
+                                    key={i}
+                                    className={`page-item ${page === i + 1 ? "active" : ""}`}
+                                >
+                                    <button
+                                        className="page-link"
+                                        onClick={() => setPage(i + 1)}
+                                    >
+                                        {i + 1}
+                                    </button>
+                                </li>
+                            ))}
+                            <li className={`page-item ${page === lastPage ? "disabled" : ""}`}>
+                                <button
+                                    className="page-link"
+                                    onClick={() => setPage(page + 1)}
+                                >
+                                    Next
+                                </button>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </section>

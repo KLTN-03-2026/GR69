@@ -144,10 +144,10 @@ ol {
 	background-position: top center;
 }
 
-.spad {
+/* .spad {
 	padding-top: 20px;
 	padding-bottom: 20px;
-}
+} */
 
 .text-white h1,
 .text-white h2,
@@ -1151,6 +1151,32 @@ ol {
 /*---------------------
   Shop Grid
 -----------------------*/
+.pagination .page-link {
+    min-width: 38px;
+    text-align: center;
+    font-weight: 500;
+}
+.pagination li button{
+	color: #009dda;
+}
+
+/* Hover hiệu ứng nhẹ */
+.pagination .page-link:hover {
+    background: #009dda;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Active nổi bật */
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #009dda, #009dda);
+    border: none;
+}
+
+/* Prev/Next */
+.pagination .page-link {
+    transition: all 0.25s ease;
+}
 
 
 /*---------------------

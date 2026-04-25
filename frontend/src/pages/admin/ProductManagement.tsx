@@ -1,20 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { productService } from "../../services/user/productService";
 import { adminProductService } from "../../services/admin/adminProductService";
 
 function ProductManagement() {
     const [data, setData] = useState<any[]>([]);
+    const [page, setPage] = useState(1);
+    const [lastPage, setLastPage] = useState(1);
     useEffect(() => {
-        productService.getAll()
+        adminProductService.getAll({ page })
             .then((res) => {
                 setData(res.data.products.data);
-                console.log(res.data.products.data);
-            })
-            .catch((err) => {
-                console.log(err);
+                setLastPage(res.data.products.last_page);
             });
-    }, []);
+    }, [page]);
 
     function handleDelete(id: number) {
         if (!window.confirm("Bạn có chắc muốn xóa không?")) return;
@@ -91,6 +89,27 @@ function ProductManagement() {
                             })}
                         </tbody>
                     </table>
+                </div>
+                <div className="d-flex justify-content-center mt-3">
+                    <button
+                        disabled={page === 1}
+                        onClick={() => setPage(page - 1)}
+                        className="btn btn-secondary me-2"
+                    >
+                        Prev
+                    </button>
+
+                    <span className="align-self-center">
+                        Trang {page} / {lastPage}
+                    </span>
+
+                    <button
+                        disabled={page === lastPage}
+                        onClick={() => setPage(page + 1)}
+                        className="btn btn-secondary ms-2"
+                    >
+                        Next
+                    </button>
                 </div>
             </div>
         </>

@@ -73,7 +73,7 @@ function Home() {
                                                 <div className="price-box">
                                                     <h5 className="price-sale">
                                                         {item.price.toLocaleString()}đ
-                                                        <span className="unit">/ {item.unit}</span>
+                                                        <span className="unit">/ {item.weight} {item.unit}</span>
                                                     </h5>
 
                                                     {item.original_price && (
@@ -142,7 +142,7 @@ function Home() {
                                                 <div className="price-box">
                                                     <h5 className="price-sale">
                                                         {item.price.toLocaleString()}đ
-                                                        <span className="unit">/ {item.unit}</span>
+                                                        <span className="unit">/ {item.weight} {item.unit}</span>
                                                     </h5>
 
                                                     {item.original_price && (
@@ -210,7 +210,7 @@ function Home() {
                                                 <div className="price-box">
                                                     <h5 className="price-sale">
                                                         {item.price.toLocaleString()}đ
-                                                        <span className="unit"> / {item.unit}</span>
+                                                        <span className="unit"> / {item.weight} {item.unit}</span>
                                                     </h5>
 
                                                     {item.original_price && (
@@ -270,7 +270,7 @@ function Home() {
                                                 <div className="price-box">
                                                     <h5 className="price-sale">
                                                         {item.price.toLocaleString()}đ
-                                                        <span className="unit"> / {item.unit}</span>
+                                                        <span className="unit"> / {item.weight} {item.unit}</span>
                                                     </h5>
 
                                                     {item.original_price && (
@@ -331,7 +331,7 @@ function Home() {
                                                 <div className="price-box">
                                                     <h5 className="price-sale">
                                                         {item.price.toLocaleString()}đ
-                                                        <span className="unit"> / {item.unit}</span>
+                                                        <span className="unit"> / {item.weight} {item.unit}</span>
                                                     </h5>
 
                                                     {item.original_price && (
@@ -363,8 +363,8 @@ function Home() {
             <section className="featured spad">
                 <div className="container">
                     <div className="section-title d-flex justify-content-between align-items-center">
-                        <h2>Mực</h2>
-                        <Link to="/category/muc-tuoi-moi-ngay" className="btn-view-all">Xem tất cả</Link>
+                        <h2>Tôm các loại</h2>
+                        <Link to="/category/cac-loai-tom-ngon" className="btn-view-all">Xem tất cả</Link>
                     </div>
                     <div className="row featured__filter">
                         {data.shrimp?.map((item: any) => {
@@ -391,7 +391,7 @@ function Home() {
                                                 <div className="price-box">
                                                     <h5 className="price-sale">
                                                         {item.price.toLocaleString()}đ
-                                                        <span className="unit"> / {item.unit}</span>
+                                                        <span className="unit"> / {item.weight} {item.unit}</span>
                                                     </h5>
 
                                                     {item.original_price && (

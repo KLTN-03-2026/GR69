@@ -2,7 +2,9 @@ import axiosClient from "../axiosClient";
 
 
 export const productService = {
-  getAll: () => axiosClient.get("/products"),
+  getAll: (params?: any) => {
+    return axiosClient.get("/products", { params });
+  },
 
   getHome: () => {
     return axiosClient.get("/home");
