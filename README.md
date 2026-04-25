@@ -5,4 +5,5 @@ php artisan serve
 # Run frontend
 cd frontend
 npm install
-npm start
+npm run dev
+
