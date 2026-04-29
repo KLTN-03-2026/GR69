@@ -188,11 +188,11 @@ function Checkout() {
                         <div className="checkout-box">
                             <h5>Phương thức thanh toán</h5>
                             <label className="payment-method">
-                                <input type="radio" name="payment" defaultChecked />
+                                <input type="radio" name="payment" value="code" checked={paymentMethod === "cod"} onChange={() => setPaymentMethod("cod")}/>
                                 <img src="https://cdn-icons-png.flaticon.com/512/2800/2800164.png" className="payment-icon" alt="COD" /> <span>Thanh Toán Khi Nhận Hàng (COD)</span>
                             </label>
                             <label className="payment-method">
-                                <input type="radio" checked={paymentMethod === "cod"} onChange={() => setPaymentMethod("cod")} name="payment" />
+                                <input type="radio" value="vnpay" checked={paymentMethod === "vnpay"} onChange={() => setPaymentMethod("vnpay")} name="payment" />
                                 <img src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png" className="payment-icon" alt="VNPay" />
                                 <span>Thanh toán online qua cổng VNPay (ATM/Visa/MasterCard/JCB/QR Pay trên Mobile Banking)</span>
                             </label>

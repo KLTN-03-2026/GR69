@@ -51,6 +51,9 @@ Route::post('/coupons/apply', [CouponController::class, 'apply']);
 // Contact
 Route::post('/contact', [ContactController::class, 'store']);
 
+//product
+Route::get('/search', [ProductController::class, 'search']);
+
 /*
 |--------------------------------------------------------------------------
 | Authenticated User Routes
@@ -81,8 +84,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/orders/{id}/cancel', [OrderController::class, 'cancel']);
     
 
-    //product
-    Route::get('/search', [ProductController::class, 'search']);
     // Reviews
     Route::post('/reviews', [ReviewController::class, 'store']);
 

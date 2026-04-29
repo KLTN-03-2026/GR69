@@ -10,19 +10,28 @@ class AddressSeeder extends Seeder
     public function run(): void
     {
         $addresses = [
-            // Admin
-            ['user_id' => 1, 'name' => 'Admin', 'phone' => '0901234567', 'address' => '123 Nguyễn Huệ, Quận 1, TP.HCM', 'is_default' => true],
-            // Nguyễn Văn An
-            ['user_id' => 2, 'name' => 'Nguyễn Văn An', 'phone' => '0912345678', 'address' => '456 Lê Lợi, Quận 3, TP.HCM', 'is_default' => true],
-            ['user_id' => 2, 'name' => 'Nguyễn Văn An', 'phone' => '0912345678', 'address' => '789 Trần Hưng Đạo, Quận 5, TP.HCM', 'is_default' => false],
-            // Trần Thị Bích
-            ['user_id' => 3, 'name' => 'Trần Thị Bích', 'phone' => '0987654321', 'address' => '12 Hoàng Sa, Quận Tân Bình, TP.HCM', 'is_default' => true],
-            // Lê Hoàng Nam
-            ['user_id' => 4, 'name' => 'Lê Hoàng Nam', 'phone' => '0976543210', 'address' => '34 Nguyễn Trãi, Quận Hà Đông, Hà Nội', 'is_default' => true],
+            [
+                'id' => 1,
+                'user_id' => 4,
+                'name' => 'Le Minh Hai',
+                'phone' => '0973627203',
+                'address' => '12 Hoa Nam, Hoa Minh, Lien Chieu, Da Nang',
+                'is_default' => 0,
+                'created_at' => '2026-04-12 06:01:58',
+                'updated_at' => '2026-04-15 03:39:15'
+            ],
+            [
+                'id' => 2,
+                'user_id' => 4,
+                'name' => 'Le Minh Hai',
+                'phone' => '0973627203',
+                'address' => 'Tu Chanh, Phong Thai, Tp.Hue',
+                'is_default' => 1,
+                'created_at' => '2026-04-12 06:06:47',
+                'updated_at' => '2026-04-15 03:39:15'
+            ],
         ];
 
-        foreach ($addresses as $address) {
-            Address::create($address);
-        }
+        Address::insert($addresses);
     }
 }

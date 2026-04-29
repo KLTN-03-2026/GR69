@@ -19,10 +19,7 @@ class DatabaseSeeder extends Seeder
             AddressSeeder::class,
             CategorySeeder::class,
             ProductSeeder::class,
-            ReviewSeeder::class,
-            PostSeeder::class,
             OrderSeeder::class,
-            CouponSeeder::class,
         ]);
     }
 }

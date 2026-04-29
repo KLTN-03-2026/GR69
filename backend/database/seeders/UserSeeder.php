@@ -11,54 +11,21 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
-                'name' => 'Admin ObeSeaFood',
-                'email' => 'admin@haisan.vn',
-                'phone' => '0901234567',
-                'password' => 'admin123',
+                'id' => 2,
+                'name' => 'Admin123',
+                'email' => 'leminhhai4@gmail.com',
+                'phone' => '0973627203',
                 'role' => 'admin',
                 'gender' => 'male',
-                'birthday' => '1990-01-15',
-            ],
-            [
-                'name' => 'Nguyễn Văn An',
-                'email' => 'user@haisan.vn',
-                'phone' => '0912345678',
-                'password' => 'user123',
-                'role' => 'user',
-                'gender' => 'male',
-                'birthday' => '1995-06-20',
-            ],
-            [
-                'name' => 'Trần Thị Bích',
-                'email' => 'bich@gmail.com',
-                'phone' => '0987654321',
-                'password' => 'bich123',
-                'role' => 'user',
-                'gender' => 'female',
-                'birthday' => '1998-11-08',
-            ],
-            [
-                'name' => 'Lê Hoàng Nam',
-                'email' => 'nam@gmail.com',
-                'phone' => '0976543210',
-                'password' => 'nam123',
-                'role' => 'user',
-                'gender' => 'male',
-                'birthday' => '1992-03-25',
-            ],
-            [
-                'name' => 'Phạm Minh Tú',
-                'email' => 'tu@gmail.com',
-                'phone' => '0965432109',
-                'password' => 'tu123',
-                'role' => 'user',
-                'gender' => 'female',
-                'birthday' => '2000-09-12',
+                'birthday' => '2004-04-16',
+                'avatar' => 'uploads/avatars/avatar_2_1775642657.jpg',
+                'email_verified_at' => null,
+                'password' => '$2y$12$s3I36czFXGic6uWFqA6sWeqr0mu4Pcg/Cb379U8k03tj3Ek366kg2', //mk: admin12345
+                'remember_token' => null,
+                'created_at' => '2026-04-07 13:57:46',
+                'updated_at' => '2026-04-08 10:20:23'
             ],
         ];
-
-        foreach ($users as $userData) {
-            User::create($userData);
-        }
+        User::insert($users);
     }
 }

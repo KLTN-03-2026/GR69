@@ -40,8 +40,8 @@ class ProductController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('origin', 'like', "%{$search}%");
+                ->orWhere('name', 'like', "{$search} %")
+                ->orWhere('name', 'like', "% {$search}");
             });
         }
 
@@ -76,31 +76,31 @@ class ProductController extends Controller
         'data' => [
             'best_sellers' => Product::with('images')
                 ->where('is_best_seller', true)
-                ->limit(8)->get(),
+                ->limit(10)->get(),
 
             'frozen' => Product::with('images')
                 ->where('type', 'frozen')
-                ->limit(8)->get(),
+                ->limit(10)->get(),
 
             'fresh' => Product::with('images')
                 ->where('type', 'fresh')
-                ->limit(8)->get(),
+                ->limit(10)->get(),
 
             'imported' => Product::with('images')
                 ->whereHas('category', fn($q) => $q->where('slug', 'hai-san-nhap-khau'))
-                ->limit(8)->get(),
+                ->limit(10)->get(),
 
             'shellfish' => Product::with('images')
                 ->whereHas('category', fn($q) => $q->where('slug', 'ngao-so-oc'))
-                ->limit(8)->get(),
+                ->limit(10)->get(),
 
             'crab' => Product::with('images')
                 ->whereHas('category', fn($q) => $q->where('slug', 'cua-ghe-tuoi-roi'))
-                ->limit(8)->get(),
+                ->limit(10)->get(),
 
             'shrimp' => Product::with('images')
                 ->whereHas('category', fn($q) => $q->where('slug', 'cac-loai-tom-ngon'))
-                ->limit(8)->get(),
+                ->limit(10)->get(),
         ]
     ]);
 }

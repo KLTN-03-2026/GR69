@@ -1,8 +1,16 @@
 import { useEffect, useState } from "react";
 import { adminDashboardService } from "../../services/admin/adminDashboadService";
 
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    phone?: string;
+    birthday?: string;
+    role: "user" | "admin";
+}
 function UsersManagement() {
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<User[]>([]);
 
     useEffect(() => {
         adminDashboardService.getCustomers()
@@ -37,8 +45,9 @@ function UsersManagement() {
                                     <tr key={user.id}>
                                         <td className="fw-bold text-dark">{user.name}</td>
                                         <td className="text-muted">{user.email}</td>
-                                        <td className="text-dark">{user.phone}</td>
-                                        <td className="text-muted">{user.birthday}</td>
+                                        <td>{user.phone || "Chưa cập nhật"}</td>
+                                        <td>{user.birthday ? new Date(user.birthday).toLocaleDateString("vi-VN") : "Chưa cập nhật"}
+                                        </td>
                                         <td>
                                             <span className="badge-role badge-user">{user.role}</span>
                                         </td>
