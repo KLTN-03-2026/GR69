@@ -8,6 +8,7 @@ interface User {
     phone?: string;
     birthday?: string;
     role: "user" | "admin";
+    status: "active" | "blocked";
 }
 function UsersManagement() {
     const [data, setData] = useState<User[]>([]);
@@ -22,6 +23,23 @@ function UsersManagement() {
                 console.log(err);
             });
     }, []);
+
+    const handleToggle = async (id: number) => {
+        if (!window.confirm("Bạn có chắc muốn thay đổi trạng thái user này?")) return;
+        try {
+            const res = await adminDashboardService.toggleUser(id);
+
+            setData(prev =>
+                prev.map(u =>
+                    u.id === id
+                        ? { ...u, status: res.data.status }
+                        : u
+                )
+            );
+        } catch {
+            alert("Lỗi");
+        }
+    };
     return (
         <>
             <div className="container-fluid" style={{ padding: '30px' }}>
@@ -35,8 +53,10 @@ function UsersManagement() {
                                 <th style={{ width: "15%" }}>Tên</th>
                                 <th style={{ width: "20%" }}>Email</th>
                                 <th style={{ width: "12%" }}>Số điện thoại</th>
-                                <th style={{ width: "25%" }}>Ngày sinh</th>
+                                <th style={{ width: "15%" }}>Ngày sinh</th>
                                 <th style={{ width: "10%" }}>Vai trò</th>
+                                <th style={{ width: "10%" }}>Trạng thái</th>
+                                <th style={{ width: "10%" }}>Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -50,6 +70,20 @@ function UsersManagement() {
                                         </td>
                                         <td>
                                             <span className="badge-role badge-user">{user.role}</span>
+                                        </td>
+                                        <td>
+                                            <span className={`badge ${user.status === "active" ? "bg-success" : "bg-danger"}`}>
+                                                {user.status === "active" ? "Hoạt động" : "Bị khóa"}
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            <button
+                                                className={`btn btn-sm ${user.status === "active" ? "btn-danger" : "btn-success"}`}
+                                                onClick={() => handleToggle(user.id)}
+                                            >
+                                                {user.status === "active" ? "Khóa" : "Mở"}
+                                            </button>
                                         </td>
                                     </tr>
                                 );

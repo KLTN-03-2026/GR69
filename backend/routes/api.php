@@ -101,6 +101,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index']);
         Route::get('/customers', [DashboardController::class, 'customers']);
 
+        //users 
+        Route::post('/users/{id}/toggle-status', [DashboardController::class, 'toggleUser']);
+
         // Categories
         Route::post('/categories', [CategoryController::class, 'store']);
         Route::put('/categories/{id}', [CategoryController::class, 'update']);

@@ -7,5 +7,8 @@ export const adminDashboardService = {
 
   dashboard(params?: any) {
     return axiosClient.get("/admin/dashboard", { params });
-  }
+  },
+
+  toggleUser: (id: number) =>
+    axiosClient.post(`/admin/users/${id}/toggle-status`)
 };

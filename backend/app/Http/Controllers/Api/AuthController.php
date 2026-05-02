@@ -51,6 +51,12 @@ class AuthController extends Controller
 
         $user = User::where('email', $validated['email'])->first();
 
+        if ($user->status === 'blocked') {
+            return response()->json([
+                'message' => 'Tài khoản đã bị khóa'
+            ], 403);
+        }
+
         if (!$user || !Hash::check($validated['password'], $user->password)) {
             return response()->json([
                 'success' => false,

@@ -123,4 +123,19 @@ class DashboardController extends Controller
 
         return response()->json(['success' => true, 'customers' => $customers]);
     }
+    public function toggleUser($id)
+    {
+        $user = User::findOrFail($id);
+        if (auth()->id() == $user->id) {
+            return response()->json([
+                'message' => 'Không thể khóa chính mình'
+            ], 400);
+        }
+        $user->status = $user->status === 'active' ? 'blocked' : 'active';
+        $user->save();
+        return response()->json([
+            'success' => true,
+            'status' => $user->status
+        ]);
+    }
 }

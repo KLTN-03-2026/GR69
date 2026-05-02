@@ -107,8 +107,7 @@ function ProductDetail() {
                     <div className="container">
                         <div className="breadcrumb-inner">
                             <a href="index.html">Trang chủ</a> /
-                            <a href="#">Danh mục</a> /
-                            <span>Cửa hàng</span>
+                            <span>{product.name}</span>
                         </div>
                     </div>
                 </div>
@@ -142,12 +141,16 @@ function ProductDetail() {
                             <div className="product-detail">
                                 <h3 className="product-detail__title">{product.name}</h3>
                                 <div className="product-detail__rating">
-                                    <i className="fa fa-star" />
-                                    <i className="fa fa-star" />
-                                    <i className="fa fa-star" />
-                                    <i className="fa fa-star" />
-                                    <i className="fa fa-star-half-o" />
-                                    <span>(95 đánh giá)</span>
+                                    {[1, 2, 3, 4, 5].map((star) => {
+                                        if (avgRating >= star) {
+                                            return <i key={star} className="fa fa-star" />;
+                                        } else if (avgRating >= star - 0.5) {
+                                            return <i key={star} className="fa fa-star-half-o" />;
+                                        } else {
+                                            return <i key={star} className="fa fa-star-o" />;
+                                        }
+                                    })}
+                                    <span>({reviews.length} đánh giá)</span>
                                 </div>
                                 <p className="product-detail__meta">
                                     <span className="label">Tình trạng:</span> {product.type}
