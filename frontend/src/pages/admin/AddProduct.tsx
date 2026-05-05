@@ -60,7 +60,7 @@ function AddProduct() {
     }, []);
 
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         if (name === "name") {
             setInput(prev => ({
@@ -278,7 +278,14 @@ function AddProduct() {
                             <div className="row mb-3 align-items-center">
                                 <label className="col-sm-3 col-form-label text-end text-muted form-label-custom">Mô tả *</label>
                                 <div className="col-sm-7">
-                                    <input type="text" name="description" value={input.description} className="form-control form-input-custom" placeholder="VD: Size 1.5 - 3kg/con, đánh bắt tự nhiên..." onChange={handleChange} />
+                                    <textarea
+                                        name="description"
+                                        value={input.description}
+                                        className="form-control form-input-custom"
+                                        onChange={handleChange}
+                                        placeholder="VD: Size 1.5 - 3kg/con, đánh bắt tự nhiên..."
+                                        rows={4}
+                                    />
                                     <p className="text-danger">{errors.description}</p>
 
                                 </div>

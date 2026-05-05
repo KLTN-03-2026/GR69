@@ -17,6 +17,7 @@ function Login() {
         password: ""
     });
     const [errors, setErrors] = useState<FormError>({});
+    const [showPass, setShowPass] = useState(false);
     const navigate = useNavigate();
 
     function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
@@ -48,7 +49,7 @@ function Login() {
         if (!flag) {
             setErrors(errorSubmit);
         } else {
-            setErrors({}); // 🔥 FIX: clear lỗi trước khi login
+            setErrors({});
 
             const data = {
                 email: input.email,
@@ -95,8 +96,10 @@ function Login() {
                     {errors.email && <div className="error">{errors.email}</div>}
                 </div>
                 <div className="input-box">
-                    <input type="password" name="password" id="password" placeholder="Mật khẩu" value={input.password} onChange={handleInput} />
-                    <span className="toggle-password" />
+                    <input type={showPass ? "text" : "password"} name="password" id="password" placeholder="Mật khẩu" value={input.password} onChange={handleInput} />
+                    <span className="toggle-password" onClick={() => setShowPass(!showPass)}>
+                        <i className={`fa ${showPass ? "fa-eye-slash" : "fa-eye"}`} />
+                    </span>
                     {errors.password && <div className="error">{errors.password}</div>}
                 </div>
                 <button type="submit" className="login-btn">Đăng nhập</button>
