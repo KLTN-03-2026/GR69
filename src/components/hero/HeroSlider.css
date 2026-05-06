@@ -1,0 +1,47 @@
+.hero__slider .swiper-button-next,
+.hero__slider .swiper-button-prev {
+    background-color: white !important; 
+    width: 40px !important;        
+    border-radius: 50% !important;     
+    opacity: 0.8 !important;        
+    transition: all 0.3s ease !important;
+    margin-top: -20px !important; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important; 
+
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    top: 50% !important;
+    position: absolute !important;
+    z-index: 10 !important;
+}
+
+.hero__slider .swiper-button-next:hover,
+.hero__slider .swiper-button-prev:hover {
+    opacity: 1 !important;
+    background-color: rgba(255, 255, 255, 1) !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+}
+.hero__slider .swiper-button-next::after,
+.hero__slider .swiper-button-prev::after {
+    font-size: 16px !important;
+    font-weight: bold !important;
+    color: black !important; 
+    font-family: "FontAwesome" !important;
+}
+
+.hero__slider .swiper-button-prev::after {
+    content: '\f104' !important;
+}
+
+.hero__slider .swiper-button-next::after {
+    content: '\f105' !important;
+}
+
+.hero__slider .swiper-button-prev {
+    left: 15px !important;
+}
+
+.hero__slider .swiper-button-next {
+    right: 15px !important;
+}

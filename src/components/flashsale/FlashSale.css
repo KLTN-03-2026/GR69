@@ -1,0 +1,140 @@
+/* Container chung */
+.flash-sale-section {
+  background-color: #f7e7da;
+  padding: 10px;
+  border-radius: 8px;
+  max-width: 1296px;
+  width: 100%;
+  margin: 0 auto;
+  font-family: sans-serif;
+  margin-bottom: 40px;
+}
+
+/* Header */
+.flash-sale-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.flash-sale-header h4 {
+  margin: 0;
+  color: #ff5722;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.flash-sale-header a.btn-view-all {
+  background-color: #ff5722;
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.flash-sale-header a.btn-view-all:hover {
+  background-color: #e64a19;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+/* Từng Card sản phẩm */
+.flash-sale-card {
+  background-color: #ffffff;
+  border-radius: 6px;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.flash-sale-pic {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.flash-sale-pic img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Badges */
+.badge-discount {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background-color: #ff3b30;
+  color: white;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 4px;
+}
+
+.badge-new {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #ff0000;
+  color: white;
+  padding: 4px 6px;
+  font-size: 10px;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Phần thông tin và nút giỏ hàng */
+.flash-sale-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: auto;
+}
+
+.info-text h6 {
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.info-text h5 {
+  margin: 0;
+  font-size: 16px;
+  color: #007bff; /* Màu xanh nước biển cho giá */
+  font-weight: bold;
+}
+
+/* Nút thêm vào giỏ */
+.btn-cart {
+  background-color: #ff7f00;
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-cart:hover {
+  background-color: #e67300;
+}
