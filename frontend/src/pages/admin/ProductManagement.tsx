@@ -2,80 +2,24 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { adminProductService } from "../../services/admin/adminProductService";
 
-
-interface ProductImage {
-    id: number;
-    product_id?: number;
-    image_path: string;
-    sort_order: number;
-    created_at?: string;
-    updated_at?: string;
-}
-
-interface Category {
-    id: number;
-    name: string;
-    slug: string;
-    description?: string;
-    image?: string;
-    status?: 'active' | 'inactive';
-    created_at?: string;
-    updated_at?: string;
-}
-
-interface Product {
-    id: number;
-    category_id?: number;
-    name: string;
-    slug: string;
-    price: number;
-    original_price?: number | null; 
-    description?: string;
-    origin?: string;
-    weight?: string;
-    unit: string;
-    type?: 'fresh' | 'frozen' | 'dried';
-    is_best_seller?: boolean | number;
-    is_new?: boolean | number;
-    stock: number;
-    rating?: number;
-    created_at?: string;
-    updated_at?: string;
-
-    images: ProductImage[];
-    category: Category;
-}
-
 function ProductManagement() {
-    const [products, setProducts] = useState<Product[]>([]);
+    const [data, setData] = useState<any[]>([]);
     const [page, setPage] = useState(1);
-    const [keyword, setKeyword] = useState("");
     const [lastPage, setLastPage] = useState(1);
-
     useEffect(() => {
-        const fetchData = async () => {
-            const res = await adminProductService.getAll({
-                page,
-                search: keyword
+        adminProductService.getAll({ page })
+            .then((res) => {
+                setData(res.data.products.data);
+                setLastPage(res.data.products.last_page);
             });
-
-            setProducts(res.data.products.data);
-            setLastPage(res.data.products.last_page);
-        };
-
-        fetchData();
-    }, [page, keyword]);
-
-    useEffect(() => {
-        setPage(1);
-    }, [keyword]);
+    }, [page]);
 
     function handleDelete(id: number) {
         if (!window.confirm("Bạn có chắc muốn xóa không?")) return;
 
         adminProductService.delete(id)
             .then(() => {
-                setProducts(prev => prev.filter(item => item.id !== id));
+                setData(prev => prev.filter(item => item.id !== id));
             })
             .catch(err => console.log(err));
     }
@@ -85,7 +29,8 @@ function ProductManagement() {
                 <div className="header-actions">
                     <h4>Danh sách Thủy Hải Sản</h4>
                     <form className="search-box">
-                        <input type="text" className="form-control" placeholder="Nhập tên sản phẩm..." value={keyword} onChange={(e) => setKeyword(e.target.value)} />
+                        <input type="text" className="form-control" placeholder="Nhập tên sản phẩm..." />
+                        <button type="button" className="btn btn-primary px-4" style={{ width: "180px" }}>Tìm kiếm</button>
                     </form>
                     <Link to="/admin/add-product" className="btn btn-add-new text-decoration-none" style={{ backgroundColor: "#10b981", color: "#fff" }}>
                         <i className="fa-solid fa-plus me-1" /> Thêm Mới
@@ -107,7 +52,7 @@ function ProductManagement() {
                             </tr>
                         </thead>
                         <tbody>
-                            {products.map((item) => {
+                            {data.map((item) => {
                                 return (
                                     <>
                                         <tr key={item.id}>
@@ -151,7 +96,7 @@ function ProductManagement() {
                         onClick={() => setPage(page - 1)}
                         className="btn btn-secondary me-2"
                     >
-                        Sau
+                        Prev
                     </button>
 
                     <span className="align-self-center">
@@ -163,7 +108,7 @@ function ProductManagement() {
                         onClick={() => setPage(page + 1)}
                         className="btn btn-secondary ms-2"
                     >
-                        Trước
+                        Next
                     </button>
                 </div>
             </div>

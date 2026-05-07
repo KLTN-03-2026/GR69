@@ -8,6 +8,7 @@ import '../assets/main/css/style.css';
 import { useCart } from '../context/CartContext';
 import { useEffect, useState } from 'react';
 import { productService } from '../services/user/productService';
+import ChatBox from '../components/chatbox/ChatBox';
 
 function MainLayout() {
     const navigate = useNavigate();
@@ -233,6 +234,9 @@ function MainLayout() {
                     </div>
                 </div>
             </footer>
+
+            {/* Chatbox chăm sóc khách hàng */}
+            <ChatBox />
         </>
     );
 }

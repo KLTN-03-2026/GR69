@@ -7,23 +7,8 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { toast } from 'react-toastify';
 
-interface ProductImage {
-    id: number;
-    image_path: string;
-}
-
-interface Product {
-    id: number;
-    name: string;
-    slug: string;
-    price: number;
-    original_price?: number;
-    unit?: string;
-    images?: ProductImage[];
-    is_new?: boolean;
-}
 type FlashSaleProps = {
-    data: Product[];
+    data: any[];
 };
 const FlashSale = ({ data }: FlashSaleProps) => {
     const {addToCart}=useCart();
@@ -53,7 +38,7 @@ const FlashSale = ({ data }: FlashSaleProps) => {
                     }}
                     className="flash-sale-slider"
                 >
-                    {data?.map((item) => {
+                    {data?.map((item: any) => {
                         return (
                             <SwiperSlide key={item.id}>
                                 <div className="flash-sale-card">
@@ -63,7 +48,7 @@ const FlashSale = ({ data }: FlashSaleProps) => {
                                                 src={`http://127.0.0.1:8000/${item.images?.[0]?.image_path}`}
                                                 alt={item.name}
                                             />
-                                            {item.is_new && <span className="badge-new">NEW</span>}
+                                            {item.isNew && <span className="badge-new">NEW</span>}
                                         </div>
                                     </Link>
                                     <div className="flash-sale-info">

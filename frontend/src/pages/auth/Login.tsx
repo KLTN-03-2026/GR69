@@ -1,4 +1,5 @@
-import { useState } from "react";
+import React, { useState } from "react";
+
 import { Link, useNavigate } from "react-router-dom";
 import axiosClient from "../../services/axiosClient";
 import { toast } from "react-toastify";
@@ -17,7 +18,6 @@ function Login() {
         password: ""
     });
     const [errors, setErrors] = useState<FormError>({});
-    const [showPass, setShowPass] = useState(false);
     const navigate = useNavigate();
 
     function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
@@ -30,9 +30,10 @@ function Login() {
     function handleLogin(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        let errorSubmit: FormError = {};
+        const errorSubmit: FormError = {};
         let flag = true;
-        let checkEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        // eslint-disable-next-line no-useless-escape
+        const checkEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
         if (input.email == "") {
             errorSubmit.email = "Vui lòng nhập email";
@@ -49,7 +50,7 @@ function Login() {
         if (!flag) {
             setErrors(errorSubmit);
         } else {
-            setErrors({});
+            setErrors({}); // 🔥 FIX: clear lỗi trước khi login
 
             const data = {
                 email: input.email,
@@ -96,10 +97,8 @@ function Login() {
                     {errors.email && <div className="error">{errors.email}</div>}
                 </div>
                 <div className="input-box">
-                    <input type={showPass ? "text" : "password"} name="password" id="password" placeholder="Mật khẩu" value={input.password} onChange={handleInput} />
-                    <span className="toggle-password" onClick={() => setShowPass(!showPass)}>
-                        <i className={`fa ${showPass ? "fa-eye-slash" : "fa-eye"}`} />
-                    </span>
+                    <input type="password" name="password" id="password" placeholder="Mật khẩu" value={input.password} onChange={handleInput} />
+                    <span className="toggle-password" />
                     {errors.password && <div className="error">{errors.password}</div>}
                 </div>
                 <button type="submit" className="login-btn">Đăng nhập</button>

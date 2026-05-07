@@ -2,22 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { adminVoucherService } from "../../services/admin/adminVoucherService";
 
-interface Voucher {
-    id: number;
-    code: string;
-    type: "fixed" | "percent";
-    value: number;
-    label?: string | null;
-    min_order: number;
-    max_uses: number;
-    used_count: number;
-    is_active: boolean | number;
-    expires_at?: string | null;
-    created_at?: string;
-    updated_at?: string;
-}
 function VouchersManagement() {
-    const [data, setData] = useState<Voucher[]>([]);
+    const [data, setData] = useState<any[]>([]);
 
     useEffect(() => {
         adminVoucherService.getAll()

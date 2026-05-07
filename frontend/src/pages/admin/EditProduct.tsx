@@ -89,7 +89,7 @@ function EditProduct() {
     }, [id]);
 
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         if (name === "name") {
             setInput(prev => ({
@@ -313,14 +313,7 @@ function EditProduct() {
                             <div className="row mb-3 align-items-center">
                                 <label className="col-sm-3 col-form-label text-end text-muted form-label-custom">Mô tả *</label>
                                 <div className="col-sm-7">
-                                    <textarea
-                                        name="description"
-                                        value={input.description}
-                                        className="form-control form-input-custom"
-                                        onChange={handleChange}
-                                        placeholder="VD: Size 1.5 - 3kg/con, đánh bắt tự nhiên..."
-                                        rows={4}
-                                    />
+                                    <input type="text" name="description" value={input.description} className="form-control form-input-custom" placeholder="VD: Size 1.5 - 3kg/con, đánh bắt tự nhiên..." onChange={handleChange} />
                                     <p className="text-danger">{errors.description}</p>
 
                                 </div>
@@ -418,7 +411,7 @@ function EditProduct() {
                             <div className="row">
                                 <div className="col-sm-3" />
                                 <div className="col-sm-7 d-flex gap-2">
-                                    <button type="reset" className="btn btn-primary btn-reset" onClick={handleReset}>Reset</button>
+                                    <button type="reset" className="btn btn-primary btn-reset"  onClick={handleReset}>Reset</button>
                                     <button type="submit" className="btn btn-success btn-submit">Cập nhật</button>
                                 </div>
                             </div>

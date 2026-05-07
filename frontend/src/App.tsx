@@ -60,6 +60,8 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/about-us" element={<AboutUs />} />
 
+          
+
           {/* <Route path="contact" element={<Contact />} /> */}
         </Route>
 

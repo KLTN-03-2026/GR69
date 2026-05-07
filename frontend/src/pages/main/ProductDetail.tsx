@@ -5,47 +5,6 @@ import { useCart } from "../../context/CartContext";
 import Hero from "../../components/hero/Hero";
 import { reviewService } from "../../services/user/reviewService";
 
-
-interface ProductImage {
-    id: number;
-    image_path: string;
-}
-
-interface Product {
-    id: number;
-    name: string;
-    slug: string;
-    price: number;
-    original_price?: number;
-    description?: string;
-    type?: "fresh" | "frozen" | "dried";
-    origin?: string;
-    weight?: string;
-    unit?: string;
-
-    stock?: number;
-    rating?: number;
-    is_best_seller?: boolean;
-    is_new?: boolean;
-
-    images?: ProductImage[];
-}
-
-interface User {
-    id: number;
-    name: string;
-    avatar?: string | null;
-}
-
-interface Review {
-    id: number;
-    product_id: number;
-    user_id: number;
-    rating: number;
-    comment: string;
-    created_at: string;
-    user: User;
-}
 function ProductDetail() {
     const { addToCart } = useCart();
     const categories = [
@@ -61,11 +20,11 @@ function ProductDetail() {
         { name: "Mực", path: "/category/muc-tuoi-moi-ngay" },
     ];
     const { slug } = useParams();
-    const [product, setProduct] = useState<Product | null>(null);
-    const [mainImage, setMainImage] = useState<string | undefined>();
+    const [product, setProduct] = useState<any>(null);
+    const [mainImage, setMainImage] = useState<string>("");
     const [quantity, setQuantity] = useState(1);
     const [activeTab, setActiveTab] = useState("description");
-    const [reviews, setReviews] = useState<Review[]>([]);
+    const [reviews, setReviews] = useState<any[]>([]);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -98,7 +57,7 @@ function ProductDetail() {
         setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
     };
 
-    const avgRating = reviews.length > 0 ? Number((reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)) : 0;
+    const avgRating = reviews.length > 0 ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1) : 0;
     return (
         <>
             <Hero categories={categories} />
@@ -107,7 +66,8 @@ function ProductDetail() {
                     <div className="container">
                         <div className="breadcrumb-inner">
                             <a href="index.html">Trang chủ</a> /
-                            <span>{product.name}</span>
+                            <a href="#">Danh mục</a> /
+                            <span>Cửa hàng</span>
                         </div>
                     </div>
                 </div>
@@ -125,7 +85,7 @@ function ProductDetail() {
                                     />
                                 </div>
                                 <div className="product__details__pic__slider">
-                                    {product.images?.map((img: ProductImage, index: number) => (
+                                    {product.images?.map((img: any, index: number) => (
                                         <img
                                             key={index}
                                             src={`http://127.0.0.1:8000/${img.image_path}`}
@@ -141,16 +101,12 @@ function ProductDetail() {
                             <div className="product-detail">
                                 <h3 className="product-detail__title">{product.name}</h3>
                                 <div className="product-detail__rating">
-                                    {[1, 2, 3, 4, 5].map((star) => {
-                                        if (avgRating >= star) {
-                                            return <i key={star} className="fa fa-star" />;
-                                        } else if (avgRating >= star - 0.5) {
-                                            return <i key={star} className="fa fa-star-half-o" />;
-                                        } else {
-                                            return <i key={star} className="fa fa-star-o" />;
-                                        }
-                                    })}
-                                    <span>({reviews.length} đánh giá)</span>
+                                    <i className="fa fa-star" />
+                                    <i className="fa fa-star" />
+                                    <i className="fa fa-star" />
+                                    <i className="fa fa-star" />
+                                    <i className="fa fa-star-half-o" />
+                                    <span>(95 đánh giá)</span>
                                 </div>
                                 <p className="product-detail__meta">
                                     <span className="label">Tình trạng:</span> {product.type}
@@ -162,11 +118,7 @@ function ProductDetail() {
 
                                 <div className="product-detail__price">
                                     <span className="product-detail__price-current">{product.price.toLocaleString()}đ</span>
-                                    {product.original_price && (
-                                        <span className="product-detail__price-old">
-                                            {product.original_price.toLocaleString()}đ
-                                        </span>
-                                    )}
+                                    <span className="product-detail__price-old">{product.original_price.toLocaleString()}đ</span>
                                 </div>
                                 <p className="product-detail__unit">
                                     Quy cách: {product.weight} {product.unit || "N/A"}
@@ -175,7 +127,7 @@ function ProductDetail() {
                                     <span className="product-detail__label">Số lượng:</span>
                                     <div className="product-detail__qty-control">
                                         <button className="product-detail__qty-btn" onClick={decreaseQty} >-</button>
-                                        <input className="product-detail__qty-input" type="number" id="qty" value={quantity}
+                                        <input className="product-detail__qty-input" type=" number" id="qty" value={quantity}
                                             onChange={(e) => {
                                                 const val = Number(e.target.value);
                                                 if (val >= 1) setQuantity(val);

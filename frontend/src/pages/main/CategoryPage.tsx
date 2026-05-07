@@ -1,44 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { categoryService } from "../../services/user/categoryService";
+import CategoryDropdown from "../../components/category/CategoryDropDown";
 import Hero from "../../components/hero/Hero";
-import { useCart } from "../../context/CartContext";
-import { toast } from "react-toastify";
-import { productService } from "../../services/user/productService";
 
-interface ProductImage {
-    id: number;
-    image_path: string;
-}
-
-interface Product {
-    id: number;
-    name: string;
-    slug: string;
-    price: number;
-    original_price?: number;
-    description?: string;
-    type?: "fresh" | "frozen" | "dried";
-    origin?: string;
-    weight?: string;
-    unit?: string;
-
-    stock?: number;
-    rating?: number;
-    is_best_seller?: boolean;
-    is_new?: boolean;
-
-    images?: ProductImage[];
-}
-
-interface Category {
-    id: number;
-    name: string;
-    slug: string;
-}
 function CategoryPage() {
     const { slug } = useParams();
-    const [products, setProducts] = useState<Product[]>([]);
-    const [category, setCategory] = useState<Category | null>(null);
+    const [products, setProducts] = useState<any[]>([]);
+    const [category, setCategory] = useState<any>(null);
     const categories = [
         { name: "Bán chạy nhất", path: "/category/ban-chay-nhat" },
         { name: "Hải sản đông lạnh", path: "/category/hai-san-dong-lanh-moi" },
@@ -52,40 +21,13 @@ function CategoryPage() {
         { name: "Mực", path: "/category/muc-tuoi-moi-ngay" },
     ];
 
-    const { addToCart } = useCart();
     useEffect(() => {
         const fetchCategory = async () => {
             if (!slug) return;
+            const res = await categoryService.getBySlug(slug);
 
-            let params: any = {};
-            switch (slug) {
-                case "ban-chay-nhat":
-                    params.best_seller = true;
-                    params.per_page = 100;
-                    break;
-                case "hai-san-dong-lanh-moi":
-                    params.type = "frozen";
-                    break;
-                case "hai-san-tuoi-song":
-                    params.type = "fresh";
-                    break;
-                case "hai-san-nhap-khau":
-                case "ngao-so-oc":
-                case "cua-ghe-tuoi-roi":
-                case "cac-loai-tom-ngon":
-                    params.category_slug = slug;
-                    break;
-                default:
-                    params.category_slug = slug;
-            }
-
-            const res = await productService.getAll(params);
-            setProducts(res.data.products.data);
-            setCategory({
-                id: 0,
-                name: categories.find(c => c.path.includes(slug))?.name || "Danh mục",
-                slug: slug
-            });
+            setCategory(res.data.category);
+            setProducts(res.data.products);
         };
 
         fetchCategory();
@@ -117,9 +59,9 @@ function CategoryPage() {
                         <h2>{category?.name || "Danh mục sản phẩm"}</h2>
                     </div>
                     <div className="row featured__filter">
-                        {products?.map((item) => {
+                        {products?.map((item: any) => {
                             return (
-                                <div className="col-5-custom" key={item.id}>
+                                <div className="col-5-custom">
                                     <Link to={`/product/${item.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                                         <div className="featured__item">
                                             <div
@@ -147,16 +89,9 @@ function CategoryPage() {
                                                             </span>
                                                         )}
                                                     </div>
-                                                    <button className="add-to-cart-btn"
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            e.stopPropagation();
-                                                            addToCart(item, 1);
-                                                            toast.success("Đã thêm vào giỏ hàng");
-
-                                                        }}>
+                                                    <a href="#" className="add-to-cart-btn">
                                                         <i className="fa fa-shopping-cart" />
-                                                    </button>
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
