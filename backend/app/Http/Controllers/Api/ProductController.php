@@ -298,4 +298,91 @@ class ProductController extends Controller
             'data' => $products
         ]);
     }
+
+public function chatbotProducts(Request $request)
+{
+    $query = Product::with([
+        'category:id,name,slug',
+        'images:id,product_id,image_path,sort_order'
+    ])
+    ->select(
+        'id',
+        'category_id',
+        'name',
+        'slug',
+        'price',
+        'original_price',
+        'description',
+        'type',
+        'stock',
+        'is_best_seller',
+        'is_new',
+        'created_at'
+    )
+    ->where('stock', '>', 0);
+
+    // search keyword
+    if ($request->has('search')) {
+        $search = $request->search;
+
+        $query->where('name', 'like', "%{$search}%");
+    }
+
+    // lọc theo category
+    if ($request->has('category_slug')) {
+        $slug = $request->category_slug;
+
+        $query->whereHas('category', function ($q) use ($slug) {
+            $q->where('slug', $slug);
+        });
+    }
+
+    // lọc theo giá
+    if ($request->has('min_price')) {
+        $query->where('price', '>=', $request->min_price);
+    }
+
+    if ($request->has('max_price')) {
+        $query->where('price', '<=', $request->max_price);
+    }
+
+    // ưu tiên bestseller
+    $products = $query
+        ->orderByDesc('is_best_seller')
+        ->orderByDesc('created_at')
+        ->limit(100)
+        ->get()
+        ->map(function ($product) {
+
+            $image = $product->images->first();
+
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'slug' => $product->slug,
+                'price' => $product->price,
+                'original_price' => $product->original_price,
+                'description' => $product->description,
+                'type' => $product->type,
+                'stock' => $product->stock,
+                'is_best_seller' => $product->is_best_seller,
+                'is_new' => $product->is_new,
+
+                'category' => [
+                    'id' => $product->category?->id,
+                    'name' => $product->category?->name,
+                    'slug' => $product->category?->slug,
+                ],
+
+                'image' => $image
+                    ? asset($image->image_path)
+                    : null,
+            ];
+        });
+
+    return response()->json([
+        'success' => true,
+        'products' => $products
+    ]);
+}
 }

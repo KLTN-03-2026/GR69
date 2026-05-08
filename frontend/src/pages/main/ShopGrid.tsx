@@ -5,8 +5,33 @@ import Hero from "../../components/hero/Hero";
 import { useCart } from "../../context/CartContext";
 import { toast } from "react-toastify";
 
+interface ProductImage {
+    id: number;
+    image_path: string;
+    sort_order?: number;
+}
+
+interface Product {
+    id: number;
+    name: string;
+    slug: string;
+    price: number;
+    original_price?: number;
+    description?: string;
+    type?: "fresh" | "frozen" | "dried";
+    origin?: string;
+    weight?: string;
+    unit?: string;
+
+    stock?: number;
+    rating?: number;
+    is_best_seller?: boolean;
+    is_new?: boolean;
+
+    images?: ProductImage[];
+}
 function ShopGrid() {
-    const [products, setProducts] = useState<any[]>([]);
+    const [products, setProducts] = useState<Product[]>([]);
     const [page, setPage] = useState(1);
     const [lastPage, setLastPage] = useState(1);
     const { addToCart } = useCart();

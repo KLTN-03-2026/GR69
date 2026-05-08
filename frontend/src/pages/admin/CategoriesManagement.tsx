@@ -2,9 +2,18 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { categoryService } from "../../services/user/categoryService";
 import { adminCategoryService } from "../../services/admin/adminCategoryService";
+import { toast } from "react-toastify";
 
+interface Category {
+    id: number;
+    name: string;
+    slug: string;
+    description?: string;
+    image?: string;
+    status: "active" | "inactive";
+}
 function CatagoriesManagement() {
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<Category[]>([]);
 
     useEffect(() => {
         categoryService.getAll()
@@ -22,8 +31,8 @@ function CatagoriesManagement() {
 
         adminCategoryService.delete(id)
             .then(() => {
-                // reload lại list
                 setData(prev => prev.filter(item => item.id !== id));
+                toast.success("Xóa danh mục thành công");
             })
             .catch(err => console.log(err));
     }

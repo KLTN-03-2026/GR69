@@ -53,6 +53,7 @@ Route::post('/contact', [ContactController::class, 'store']);
 
 //product
 Route::get('/search', [ProductController::class, 'search']);
+Route::get('/chatbot/products', [ProductController::class, 'chatbotProducts']);
 
 /*
 |--------------------------------------------------------------------------

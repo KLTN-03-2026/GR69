@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 interface CartItem {
     id: number;
@@ -13,7 +12,6 @@ interface CartContextType {
     addToCart: (product: any, quantity: number) => void;
     increaseQty: (id: number) => void;
     decreaseQty: (id: number) => void;
-    updateQty: (id: number, qty: number) => void;
     removeItem: (id: number) => void;
     subtotal: number;
     total: number;
@@ -34,28 +32,25 @@ export const CartProvider = ({ children }: any) => {
     const addToCart = (product: any, quantity: number) => {
         setCartItems(prev => {
             const existing = prev.find(item => item.id === product.id);
-            let updatedItems;
 
             if (existing) {
-                updatedItems = prev.map(item =>
+                return prev.map(item =>
                     item.id === product.id
                         ? { ...item, quantity: item.quantity + quantity }
                         : item
                 );
-            } else {
-                updatedItems = [
-                    ...prev,
-                    {
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        image: product.images?.[0]?.image_path,
-                        quantity: quantity,
-                    },
-                ];
             }
-            toast.success(`Đã thêm ${quantity} ${product.name} vào giỏ hàng!`);
-            return updatedItems;
+
+            return [
+                ...prev,
+                {
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.images?.[0]?.image_path,
+                    quantity: quantity,
+                },
+            ];
         });
     };
 
@@ -83,17 +78,6 @@ export const CartProvider = ({ children }: any) => {
         setCartItems(prev => prev.filter(item => item.id !== id));
     };
 
-    const updateQty = (id: number, qty: number) => {
-        if (qty < 1) qty = 1;
-        setCartItems(prev =>
-            prev.map(item =>
-                item.id === id
-                    ? { ...item, quantity: qty }
-                    : item
-            )
-        );
-    };
-
     const clearCart = () => {
         setCartItems([]);
     };
@@ -112,7 +96,6 @@ export const CartProvider = ({ children }: any) => {
                 addToCart,
                 increaseQty,
                 decreaseQty,
-                updateQty,
                 removeItem,
                 subtotal,
                 total,

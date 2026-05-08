@@ -234,7 +234,6 @@ function MainLayout() {
                     </div>
                 </div>
             </footer>
-
             {/* Chatbox chăm sóc khách hàng */}
             <ChatBox />
         </>

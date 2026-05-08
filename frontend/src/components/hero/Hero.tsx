@@ -1,26 +1,14 @@
 import CategoryDropdown from "../category/CategoryDropDown";
 import { useState, useEffect } from "react";
 import { productService } from "../../services/user/productService";
-import { categoryService } from "../../services/user/categoryService";
 import { Link, useNavigate } from "react-router-dom";
 import HeroSlider from "./HeroSlider";
 
-function Hero({ showSlider = false }: any) {
+function Hero({ categories, showSlider = false }: any) {
     const [keyword, setKeyword] = useState("");
     const [results, setResults] = useState<any[]>([]);
     const [showDropdown, setShowDropdown] = useState(false);
-    const [dbCategories, setDbCategories] = useState<{name: string, path: string}[]>([]);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        categoryService.getAll().then(res => {
-            const mapped = res.data.categories.map((c: any) => ({
-                name: c.name,
-                path: `/category/${c.slug}`
-            }));
-            setDbCategories(mapped);
-        }).catch(err => console.error("Failed to load categories", err));
-    }, []);
 
     useEffect(() => {
         if (!keyword.trim()) {
@@ -50,7 +38,7 @@ function Hero({ showSlider = false }: any) {
             <div className="container">
                 <div className="row">
                     <div className="col-lg-3">
-                        <CategoryDropdown items={dbCategories} />
+                        <CategoryDropdown items={categories} />
                     </div>
 
                     <div className="col-lg-9">

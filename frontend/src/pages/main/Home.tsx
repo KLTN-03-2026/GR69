@@ -8,8 +8,50 @@ import { toast } from "react-toastify";
 import Hero from "../../components/hero/Hero";
 
 
+interface ProductImage {
+    id: number;
+    image_path: string;
+}
+
+interface Product {
+    id: number;
+    name: string;
+    slug: string;
+    price: number;
+    original_price?: number;
+    description?: string;
+    type?: "fresh" | "frozen" | "dried";
+    origin?: string;
+    weight?: string;
+    unit?: string;
+
+    stock?: number;
+    rating?: number;
+    is_best_seller?: boolean;
+    is_new?: boolean;
+
+    images?: ProductImage[];
+}
+
+interface HomeData {
+    best_sellers: Product[];
+    frozen: Product[];
+    fresh: Product[];
+    imported: Product[];
+    shellfish: Product[];
+    crab: Product[];
+    shrimp: Product[];
+}
 function Home() {
-    const [data, setData] = useState<any>([]);
+    const [data, setData] = useState<HomeData>({
+        best_sellers: [],
+        frozen: [],
+        fresh: [],
+        imported: [],
+        shellfish: [],
+        crab: [],
+        shrimp: [],
+    });
     const categories = [
         { name: "Bán chạy nhất", path: "/category/ban-chay-nhat" },
         { name: "Hải sản đông lạnh", path: "/category/hai-san-dong-lanh-moi" },
@@ -49,7 +91,7 @@ function Home() {
                         <Link to="/category/ban-chay-nhat" className="btn-view-all">Xem tất cả</Link>
                     </div>
                     <div className="row featured__filter">
-                        {data.best_sellers?.map((item: any) => {
+                        {data?.best_sellers?.map((item) => {
                             return (
                                 <div className="col-5-custom">
                                     <div className="featured__item">
@@ -118,7 +160,7 @@ function Home() {
                         <Link to="/category/hai-san-dong-lanh-moi" className="btn-view-all">Xem tất cả</Link>
                     </div>
                     <div className="row featured__filter">
-                        {data.best_sellers?.map((item: any) => {
+                        {data?.frozen?.map((item) => {
                             return (
                                 <div className="col-5-custom">
                                     <div className="featured__item">
@@ -185,7 +227,7 @@ function Home() {
                         <Link to="/category/hai-san-nhap-khau" className="btn-view-all">Xem tất cả</Link>
                     </div>
                     <div className="row featured__filter">
-                        {data.imported?.map((item: any) => {
+                        {data?.imported?.map((item) => {
                             return (
                                 <div className="col-5-custom">
                                     <div className="featured__item">
@@ -246,7 +288,7 @@ function Home() {
                         <Link to="/category/ngao-so-oc" className="btn-view-all">Xem tất cả</Link>
                     </div>
                     <div className="row featured__filter">
-                        {data.shellfish?.map((item: any) => {
+                        {data?.shellfish?.map((item) => {
                             return (
                                 <div className="col-5-custom">
                                     <div className="featured__item">
@@ -307,7 +349,7 @@ function Home() {
                         <Link to="/category/cua-ghe-tuoi-roi" className="btn-view-all">Xem tất cả</Link>
                     </div>
                     <div className="row featured__filter">
-                        {data.crab?.map((item: any) => {
+                        {data?.crab?.map((item) => {
                             return (
                                 <div className="col-5-custom">
                                     <div className="featured__item">
@@ -367,7 +409,7 @@ function Home() {
                         <Link to="/category/cac-loai-tom-ngon" className="btn-view-all">Xem tất cả</Link>
                     </div>
                     <div className="row featured__filter">
-                        {data.shrimp?.map((item: any) => {
+                        {data?.shrimp?.map((item) => {
                             return (
                                 <div className="col-5-custom">
                                     <div className="featured__item">

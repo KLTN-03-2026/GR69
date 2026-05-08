@@ -24,7 +24,7 @@ function Checkout() {
     const navigate = useNavigate();
     const [addresses, setAddresses] = useState<Address[]>([]);
     const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
-    const { cartItems, subtotal, clearCart, increaseQty, decreaseQty, removeItem } = useCart();
+    const { cartItems, subtotal, clearCart } = useCart();
     const [note, setNote] = useState("");
     const [paymentMethod, setPaymentMethod] = useState("cod");
 
@@ -188,11 +188,11 @@ function Checkout() {
                         <div className="checkout-box">
                             <h5>Phương thức thanh toán</h5>
                             <label className="payment-method">
-                                <input type="radio" name="payment" defaultChecked />
+                                <input type="radio" name="payment" value="code" checked={paymentMethod === "cod"} onChange={() => setPaymentMethod("cod")}/>
                                 <img src="https://cdn-icons-png.flaticon.com/512/2800/2800164.png" className="payment-icon" alt="COD" /> <span>Thanh Toán Khi Nhận Hàng (COD)</span>
                             </label>
                             <label className="payment-method">
-                                <input type="radio" checked={paymentMethod === "cod"} onChange={() => setPaymentMethod("cod")} name="payment" />
+                                <input type="radio" value="vnpay" checked={paymentMethod === "vnpay"} onChange={() => setPaymentMethod("vnpay")} name="payment" />
                                 <img src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png" className="payment-icon" alt="VNPay" />
                                 <span>Thanh toán online qua cổng VNPay (ATM/Visa/MasterCard/JCB/QR Pay trên Mobile Banking)</span>
                             </label>
@@ -220,21 +220,14 @@ function Checkout() {
                                         <div className="cart-title">
                                             <span>{item.name}</span>
                                         </div>
-                                        <div className="cart-price-qty" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+                                        <div className="cart-price-qty">
                                             <div>
-                                                <span className="price-new" style={{ fontWeight: 'bold', color: '#ff4b2b' }}>
+                                                <span className="price-new">
                                                     {item.price.toLocaleString()}đ
                                                 </span>
                                             </div>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                <div className="cart__quantity" style={{ display: 'flex', alignItems: 'center', border: '1px solid #ddd', borderRadius: '4px' }}>
-                                                    <button type="button" style={{ border: 'none', background: '#f5f5f5', padding: '2px 10px', cursor: 'pointer' }} onClick={() => decreaseQty(item.id)}>-</button>
-                                                    <input type="text" value={item.quantity} readOnly style={{ width: '40px', textAlign: 'center', border: 'none', borderLeft: '1px solid #ddd', borderRight: '1px solid #ddd' }} />
-                                                    <button type="button" style={{ border: 'none', background: '#f5f5f5', padding: '2px 10px', cursor: 'pointer' }} onClick={() => increaseQty(item.id)}>+</button>
-                                                </div>
-                                                <button type="button" onClick={() => removeItem(item.id)} style={{ border: 'none', background: 'transparent', color: '#ff4b2b', cursor: 'pointer' }}>
-                                                    <i className="fa fa-trash" />
-                                                </button>
+                                            <div>
+                                                x {item.quantity}
                                             </div>
                                         </div>
                                     </div>
