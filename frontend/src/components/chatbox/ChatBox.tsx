@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 // Imports từ các files đã tách
 import type { Message, ProductItem, ConversationState, LocalResponse } from "./types/types";
 import { getLocalResponse, buildSystemPrompt } from "./services/botLogic";
-import { isProductQuery } from "./utils/chatUtils";
+// import { isProductQuery } from "./utils/chatUtils";
 import { useDraggable } from "./hooks/useDraggable";
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string;

@@ -19,6 +19,7 @@ interface Product {
     price: number;
     original_price?: number;
     unit?: string;
+    weight?: string;
     images?: ProductImage[];
     is_new?: boolean;
 }
@@ -74,7 +75,7 @@ const FlashSale = ({ data }: FlashSaleProps) => {
                                             <div className="price-box">
                                                 <h5 className="price-sale">
                                                     {item.price.toLocaleString()}đ
-                                                    <span className="unit"> / {item.unit}</span>
+                                                    <span className="unit">/ {item.weight} {item.unit}</span>
                                                 </h5>
 
                                                 {item.original_price && (

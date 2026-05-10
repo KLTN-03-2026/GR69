@@ -251,7 +251,7 @@ function EditProduct() {
             <div className="container-fluid" style={{ padding: '30px' }}>
                 <div className="panel-custom">
                     <div className="panel-header d-flex justify-content-between align-items-center">
-                        <h5 className="m-0 text-muted">Thêm Sản Phẩm Mới</h5>
+                        <h5 className="m-0 text-muted">Cập nhật sản phẩm</h5>
                     </div>
                     <div className="panel-body">
                         <form onSubmit={handleSubmit}>
