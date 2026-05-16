@@ -12,6 +12,8 @@ export interface ProductItem {
   price: number | string;
   image?: string;
   category?: string;
+  weight?: string;
+  unit?: string;
   stock?: number;
 }
 
@@ -31,8 +33,8 @@ export interface ConversationState {
   currentKeyword?: string;
 }
 
-export type LocalResponse = { 
-  text: string; 
-  quickReplies?: string[]; 
-  newState?: Partial<ConversationState> 
+export type LocalResponse = {
+  text: string;
+  quickReplies?: string[];
+  newState?: Partial<ConversationState>
 };

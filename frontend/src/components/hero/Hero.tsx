@@ -94,7 +94,7 @@ function Hero({ categories, showSlider = false }: any) {
                                     <i className="fa fa-phone" />
                                 </div>
                                 <div className="hero__search__phone__text">
-                                    <h5>09090909</h5>
+                                    <h5>0909 999 999</h5>
                                     <span>Hỗ trợ 24/7</span>
                                 </div>
                             </div>

@@ -138,7 +138,7 @@ function CategoryPage() {
                                                     <div className="price-box">
                                                         <h5 className="price-sale">
                                                             {item.price.toLocaleString()}đ
-                                                            <span className="unit"> / {item.unit}</span>
+                                                            <span className="unit">/ {item.weight}{item.unit}</span>
                                                         </h5>
 
                                                         {item.original_price && (

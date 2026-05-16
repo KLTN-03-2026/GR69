@@ -1,14 +1,13 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import "./ChatBox.css";
 import { productService } from "../../services/user/productService";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, ChatSession } from "@google/generative-ai";
 import { useCart } from "../../context/CartContext";
 import { useNavigate } from "react-router-dom";
 
 // Imports từ các files đã tách
 import type { Message, ProductItem, ConversationState, LocalResponse } from "./types/types";
 import { getLocalResponse, buildSystemPrompt } from "./services/botLogic";
-// import { isProductQuery } from "./utils/chatUtils";
 import { useDraggable } from "./hooks/useDraggable";
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY as string;
@@ -37,13 +36,62 @@ export default function ChatBox() {
 
   const { addToCart } = useCart();
   const navigate = useNavigate();
-  const { renderPos, handleMouseDown } = useDraggable(); // Custom hook kéo thả
+  const { renderPos, handleMouseDown } = useDraggable();
 
-  // History & State
-  const chatHistoryRef = useRef<{ role: "user" | "model"; parts: { text: string }[] }[]>([]);
+  // REFS QUAN TRỌNG
+  const chatSessionRef = useRef<ChatSession | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const convStateRef = useRef<ConversationState>({ stage: "idle", cart: [] });
 
+  useEffect(() => {
+    async function checkModels() {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models?key=${import.meta.env.VITE_GEMINI_API_KEY}`
+      );
+
+      const data = await res.json();
+
+      console.log(
+        data.models.map((m: any) => ({
+          name: m.name,
+          methods: m.supportedGenerationMethods,
+        }))
+      );
+    }
+
+    checkModels();
+  }, []);
+  const lastSendRef = useRef<number>(0); // Rate limit
+  const messageCountRef = useRef<number>(0); // Quản lý độ dài session
+
+  // 1. Hàm khởi tạo/cập nhật Session (Reset khi cart đổi)
+  const initChatSession = useCallback(() => {
+    if (!genAI || products.length === 0) return;
+
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+    });
+
+    chatSessionRef.current = model.startChat({
+      history: [
+        {
+          role: "user",
+          parts: [{ text: buildSystemPrompt(products, convStateRef.current.cart) }],
+        },
+        {
+          role: "model",
+          parts: [{ text: "Chào bạn! Tôi đã nắm rõ thông tin sản phẩm và giỏ hàng hiện tại của bạn. Tôi có thể giúp gì thêm?" }],
+        },
+      ],
+      generationConfig: {
+        maxOutputTokens: 2048,
+        temperature: 0.6,
+      },
+    });
+    messageCountRef.current = 0; // Reset bộ đếm khi tạo session mới
+  }, [products]);
+
+  // Fetch sản phẩm ban đầu
   useEffect(() => {
     const fetchProds = async () => {
       try {
@@ -58,44 +106,54 @@ export default function ChatBox() {
     fetchProds();
   }, []);
 
+  // Khởi tạo session khi có sản phẩm
+  useEffect(() => {
+    if (products.length > 0) initChatSession();
+  }, [products, initChatSession]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
   function mergeState(prev: ConversationState, next?: Partial<ConversationState>): ConversationState {
     if (!next) return prev;
-
-    return {
-      ...prev,
-      ...next,
-      cart: next.cart ?? prev.cart,
-    };
+    return { ...prev, ...next, cart: next.cart ?? prev.cart };
   }
+
+  // 2. Xử lý logic Local và đồng bộ Cart (Có reset AI Session)
   function processLocalAndSyncCart(trimmedText: string): LocalResponse {
     const local = getLocalResponse(trimmedText, products, convStateRef.current);
     if (local.newState) {
       const oldCartSize = convStateRef.current.cart?.length || 0;
       const newCartSize = local.newState.cart?.length || oldCartSize;
 
-      if (newCartSize > oldCartSize && local.newState.cart) {
-        const addedItems = local.newState.cart.slice(oldCartSize);
-        addedItems.forEach((item) => {
-          let foundProduct = products.find((p) => p.name.toLowerCase().includes(item.name.toLowerCase()));
-          if (!foundProduct) {
-            foundProduct = { id: Date.now() + Math.random(), name: item.name, price: item.price };
-          }
-          const qtyNum = Math.max(1, parseFloat(item.qty.replace(/[^0-9.]/g, "")) || 1);
-          addToCart(foundProduct, qtyNum);
-        });
+      if (newCartSize !== oldCartSize) {
+        if (newCartSize > oldCartSize && local.newState.cart) {
+          const addedItems = local.newState.cart.slice(oldCartSize);
+          addedItems.forEach((item) => {
+            let foundProduct = products.find((p) => p.name.toLowerCase().includes(item.name.toLowerCase()));
+            const qtyNum = Math.max(1, parseFloat(item.qty.replace(/[^0-9.]/g, "")) || 1);
+            addToCart(foundProduct || { id: Date.now() + Math.random(), name: item.name, price: item.price }, qtyNum);
+          });
+        }
+        // BUG FIX: Reset AI session để cập nhật context giỏ hàng mới nhất
+        convStateRef.current = mergeState(convStateRef.current, local.newState);
+        initChatSession();
+      } else {
+        convStateRef.current = mergeState(convStateRef.current, local.newState);
       }
-      convStateRef.current = mergeState(convStateRef.current, local.newState);
     }
     return local;
   }
 
   async function sendMessage(text: string) {
     const trimmed = text.trim();
+
+    // 3. Rate limit (1.2s)
+    const now = Date.now();
+    if (now - lastSendRef.current < 1200) return;
     if (!trimmed || isTyping) return;
+    lastSendRef.current = now;
 
     if (trimmed.toLowerCase().includes("xem giỏ hàng")) {
       navigate("/shoping-cart");
@@ -112,61 +170,45 @@ export default function ChatBox() {
       let responseText: string;
       let quickReplies: string[] | undefined;
 
-      // 1. LUÔN CHẠY LOCAL LOGIC TRƯỚC
-      // Hàm này sẽ kiểm tra 9 Intents cố định (Giỏ hàng, giá, tìm kiếm, khiếu nại...)
       const local = processLocalAndSyncCart(trimmed);
 
-      // 2. KIỂM TRA KẾT QUẢ LOCAL
       if (local.text !== "") {
-        // Nếu Local bắt được keyword -> Dùng luôn kết quả của Local
         responseText = local.text;
         quickReplies = local.quickReplies;
+      } else if (usingGemini && chatSessionRef.current) {
+        // 4. Reset session nếu quá dài (> 25 tin nhắn) để tránh tốn token/chậm
+        messageCountRef.current++;
+        if (messageCountRef.current > 25) {
+          initChatSession();
+        }
 
-      } else if (usingGemini) {
-        // 3. INTENT 10 (FALLBACK) -> GỌI GEMINI AI XỬ LÝ
-        const model = genAI!.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const chat = model.startChat({
-          history: [
-            { role: "user", parts: [{ text: buildSystemPrompt(products, convStateRef.current.cart) }] },
-            { role: "model", parts: [{ text: "Xin chào! Tôi đã sẵn sàng tư vấn." }] },
-            ...chatHistoryRef.current,
-          ],
-          generationConfig: { maxOutputTokens: 300, temperature: 0.6 },
-        });
-
-        const result = await chat.sendMessage(trimmed);
+        const result = await chatSessionRef.current.sendMessage(trimmed);
         responseText = result.response.text();
-
-        chatHistoryRef.current.push(
-          { role: "user", parts: [{ text: trimmed }] },
-          { role: "model", parts: [{ text: responseText }] }
-        );
-        if (chatHistoryRef.current.length > 12) chatHistoryRef.current = chatHistoryRef.current.slice(-12);
-
         quickReplies = getQuickReplies(trimmed);
-
       } else {
-        // 4. TRƯỜNG HỢP KHÔNG CÓ GEMINI MÀ LOCAL CŨNG KHÔNG HIỂU
-        responseText = "Mình chuyên hỗ trợ về hải sản 🦐\n👉 Bạn muốn:\n• Xem sản phẩm\n• Tư vấn món ăn\n• Kiểm tra đơn hàng?";
+        responseText = "Mình chuyên hỗ trợ về hải sản 🦐\n👉 Bạn muốn:\n• Xem sản phẩm\n• Tư vấn món ăn?";
         quickReplies = ["Xem sản phẩm", "Tư vấn món ăn"];
       }
 
-      // 5. CẬP NHẬT GIAO DIỆN
       setMessages((prev) => [...prev, { id: msgIdCounter++, role: "bot", text: responseText, timestamp: new Date(), quickReplies }]);
-
     } catch (err) {
-      console.warn("Gemini Error, switching to Local Fallback", err);
-      setUsingGemini(false);
+      console.warn("Gemini Error, auto-recovery in 30s", err);
 
-      // Lỗi do Gemini API (hết quota, rớt mạng...)
+      // 5. Auto-recovery: Tắt AI tạm thời và bật lại sau 30s
+      setUsingGemini(false);
+      setTimeout(() => {
+        setUsingGemini(true);
+        initChatSession();
+      }, 30000);
+
       setMessages((prev) => [
         ...prev,
         {
           id: msgIdCounter++,
           role: "bot",
-          text: "Xin lỗi, hiện tại trợ lý AI đang bận quá tải 🙏\nBạn có thể chọn các menu bên dưới nhé: 🦐",
+          text: "Hệ thống AI đang bảo trì nhẹ và sẽ quay lại sau 30 giây. Bạn dùng tạm thực đơn hỗ trợ nhé! 🙏",
           timestamp: new Date(),
-          quickReplies: ["Xem sản phẩm", "Công thức nấu ăn", "Chính sách giao hàng"]
+          quickReplies: ["Xem sản phẩm", "Công thức nấu ăn"]
         }
       ]);
     } finally {
@@ -177,15 +219,9 @@ export default function ChatBox() {
   function getQuickReplies(msg: string): string[] {
     const m = msg.toLowerCase();
     let replies = ["Xem sản phẩm", "Công thức nấu ăn"];
-
-    if (convStateRef.current.cart.length > 0) {
-      replies.unshift("🛒 Thanh toán", "Mua thêm"); // Đẩy lên đầu nếu có đồ trong giỏ
-    }
-
+    if (convStateRef.current.cart.length > 0) replies.unshift("🛒 Thanh toán");
     if (/giao hàng|ship/.test(m)) return ["Freeship thế nào?", "Liên hệ"];
-    if (/công thức|nấu/.test(m)) return ["Nấu tôm", "Nấu cá", "Mua nguyên liệu"];
-
-    return replies.slice(0, 3); // Giữ tối đa 3 nút để UI không bị rối
+    return replies.slice(0, 3);
   }
 
   function renderText(text: string) {

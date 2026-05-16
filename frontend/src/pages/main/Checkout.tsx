@@ -4,7 +4,7 @@ import { useCart } from "../../context/CartContext";
 import { couponService } from "../../services/user/couponService";
 import { toast } from "react-toastify";
 import { orderService } from "../../services/user/orderService";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface Address {
     id: number;
@@ -13,6 +13,7 @@ interface Address {
     address: string;
     is_default: boolean;
 }
+
 interface Coupon {
     id: number;
     code: string;
@@ -20,16 +21,25 @@ interface Coupon {
     type?: string;
     value?: number;
 }
+
 function Checkout() {
     const navigate = useNavigate();
+
+    // CHECK LOGIN
+    const token = localStorage.getItem("token");
+    const isLogin = !!token;
+
     const [addresses, setAddresses] = useState<Address[]>([]);
     const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
+
     const { cartItems, subtotal, clearCart } = useCart();
+
     const [note, setNote] = useState("");
     const [paymentMethod, setPaymentMethod] = useState("cod");
 
     const [coupons, setCoupons] = useState<Coupon[]>([]);
     const [selectedCouponId, setSelectedCouponId] = useState<number | null>(null);
+
     const [voucherCode, setVoucherCode] = useState("");
     const [discount, setDiscount] = useState(0);
     const [voucherMessage, setVoucherMessage] = useState("");
@@ -40,13 +50,18 @@ function Checkout() {
     const shippingFee = subtotal >= 500000 ? 0 : 30000;
     const finalTotal = subtotal + shippingFee - discount;
 
+    // LOAD ADDRESS ONLY WHEN LOGIN
     useEffect(() => {
+        if (!isLogin) return;
+
         addressService.getAll()
             .then((res) => {
                 const list = res.data.addresses;
+
                 setAddresses(list);
 
                 const defaultAddr = list.find((a: Address) => a.is_default);
+
                 if (defaultAddr) {
                     setSelectedAddressId(defaultAddr.id);
                 }
@@ -54,8 +69,10 @@ function Checkout() {
             .catch(() => {
                 console.log("load address failed");
             });
-    }, []);
 
+    }, [isLogin]);
+
+    // LOAD COUPONS
     useEffect(() => {
         couponService.getAll()
             .then(res => {
@@ -63,11 +80,13 @@ function Checkout() {
             });
     }, []);
 
+    // APPLY VOUCHER
     const handleApplyVoucher = async () => {
         if (!voucherCode) return;
 
         try {
             setLoadingVoucher(true);
+
             const res = await couponService.apply(voucherCode, subtotal);
 
             if (res.data.success) {
@@ -77,6 +96,7 @@ function Checkout() {
                 setDiscount(0);
                 setVoucherMessage(res.data.message || "Mã không hợp lệ");
             }
+
         } catch (error: any) {
             console.log(error.response?.data);
             setVoucherMessage("Lỗi áp mã");
@@ -89,10 +109,23 @@ function Checkout() {
         navigate(`/account/edit-address/${id}`);
     };
 
+    // PLACE ORDER
     const handlePlaceOrder = async () => {
-        if (!selectedAddressId) return;
+
+        // CHƯA LOGIN
+        if (!isLogin) {
+            toast.warning("Vui lòng đăng nhập để đặt hàng");
+            navigate("/auth/login");
+            return;
+        }
+
+        if (!selectedAddressId) {
+            toast.warning("Vui lòng chọn địa chỉ");
+            return;
+        }
 
         const address = addresses.find(a => a.id === selectedAddressId);
+
         if (!address) return;
 
         const payload = {
@@ -104,7 +137,9 @@ function Checkout() {
             shipping_name: address.name,
             shipping_phone: address.phone,
             shipping_address: address.address,
-            payment_method: "cod",
+
+            payment_method: paymentMethod,
+
             note: note,
 
             items: cartItems.map(item => ({
@@ -121,88 +156,185 @@ function Checkout() {
             const res = await orderService.create(payload);
 
             if (res.data.success) {
+
                 toast.success("Đặt hàng thành công!");
-                navigate("/order-success");
+
                 clearCart();
 
+                navigate("/order-success");
             }
 
         } catch (err) {
+
             console.log(err);
+
             toast.error("Đặt hàng thất bại");
+
         } finally {
             setLoadingOrder(false);
         }
     };
+
     return (
         <>
             <div className="container mt-4 mb-5">
                 <div className="row">
+
+                    {/* LEFT */}
                     <div className="col-lg-7 col-md-12">
+
+                        {/* ADDRESS */}
                         <div className="checkout-box">
                             <h5>Thông tin giao hàng</h5>
+
                             <div className="delivery-tabs">
                                 <div className="delivery-tab active">
-                                    <i className="fa fa-truck text-blue" /> Giao tận nơi
+                                    <i className="fa fa-truck text-blue" />
+                                    Giao tận nơi
                                 </div>
                             </div>
-                            <form>
-                                {addresses.length === 0 && (
-                                    <div className="no-address">
-                                        <p>Bạn chưa có địa chỉ nào.</p>
-                                        <button
-                                            className="btn btn-primary"
-                                            onClick={() => navigate("/account/add-address")}
-                                        >
-                                            + Thêm địa chỉ mới
-                                        </button>
-                                    </div>
-                                )}
-                                {addresses.map(addr => (
-                                    <div key={addr.id} className="address-item">
-                                        <label className="address-radio">
-                                            <input
-                                                type="radio"
-                                                name="address"
-                                                checked={selectedAddressId === addr.id}
-                                                onChange={() => setSelectedAddressId(addr.id)}
-                                            />
-                                            <div>
-                                                <strong>{addr.name}</strong> - {addr.phone}
-                                                <div>{addr.address}</div>
-                                            </div>
-                                        </label>
 
-                                        <div className="address-actions">
-                                            <button type="button"
-                                                className="btn btn-sm btn-warning"
-                                                onClick={() => handleEditAddress(addr.id)}
+                            {/* CHƯA LOGIN */}
+                            {!isLogin && (
+                                <div className="mt-3">
+
+                                    <p>
+                                        Vui lòng đăng nhập để thêm địa chỉ giao hàng
+                                    </p>
+
+                                    <Link to="/auth/login">
+                                        <button className="btn btn-primary">
+                                            Đăng nhập
+                                        </button>
+                                    </Link>
+
+                                </div>
+                            )}
+
+                            {/* ĐÃ LOGIN */}
+                            {isLogin && (
+                                <form>
+
+                                    {addresses.length === 0 && (
+                                        <div className="no-address">
+
+                                            <p>Bạn chưa có địa chỉ nào.</p>
+
+                                            <button
+                                                type="button"
+                                                className="btn btn-primary"
+                                                onClick={() => navigate("/account/add-address")}
                                             >
-                                                Cập nhật
+                                                + Thêm địa chỉ mới
                                             </button>
+
                                         </div>
-                                    </div>
-                                ))}
-                            </form>
+                                    )}
+
+                                    {addresses.map(addr => (
+                                        <div key={addr.id} className="address-item">
+                                            <label className="address-radio">
+                                                <input
+                                                    type="radio"
+                                                    name="address"
+                                                    checked={selectedAddressId === addr.id}
+                                                    onChange={() => setSelectedAddressId(addr.id)}
+                                                />
+                                                <div>
+                                                    <strong>{addr.name}</strong> - {addr.phone}
+                                                    <div>{addr.address}</div>
+                                                </div>
+
+                                            </label>
+                                            <div className="address-actions">
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-sm btn-warning"
+                                                    onClick={() => handleEditAddress(addr.id)}
+                                                >
+                                                    Cập nhật
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+                                    ))}
+                                </form>
+                            )}
                         </div>
+
+                        {/* PAYMENT */}
                         <div className="checkout-box">
+
                             <h5>Phương thức thanh toán</h5>
+
                             <label className="payment-method">
-                                <input type="radio" name="payment" value="code" checked={paymentMethod === "cod"} onChange={() => setPaymentMethod("cod")}/>
-                                <img src="https://cdn-icons-png.flaticon.com/512/2800/2800164.png" className="payment-icon" alt="COD" /> <span>Thanh Toán Khi Nhận Hàng (COD)</span>
+
+                                <input
+                                    type="radio"
+                                    name="payment"
+                                    value="cod"
+                                    checked={paymentMethod === "cod"}
+                                    onChange={() => setPaymentMethod("cod")}
+                                />
+
+                                <img
+                                    src="https://cdn-icons-png.flaticon.com/512/2800/2800164.png"
+                                    className="payment-icon"
+                                    alt="COD"
+                                />
+
+                                <span>
+                                    Thanh Toán Khi Nhận Hàng (COD)
+                                </span>
+
                             </label>
+
                             <label className="payment-method">
-                                <input type="radio" value="vnpay" checked={paymentMethod === "vnpay"} onChange={() => setPaymentMethod("vnpay")} name="payment" />
-                                <img src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png" className="payment-icon" alt="VNPay" />
-                                <span>Thanh toán online qua cổng VNPay (ATM/Visa/MasterCard/JCB/QR Pay trên Mobile Banking)</span>
+
+                                <input
+                                    type="radio"
+                                    value="vnpay"
+                                    checked={paymentMethod === "vnpay"}
+                                    onChange={() => setPaymentMethod("vnpay")}
+                                    name="payment"
+                                />
+
+                                <img
+                                    src="https://vnpay.vn/s1/statics.vnpay.vn/2023/9/06ncktiwd6dc1694418196384.png"
+                                    className="payment-icon"
+                                    alt="VNPay"
+                                />
+
+                                <span>
+                                    Thanh toán online qua VNPay
+                                </span>
+
                             </label>
+
                         </div>
+
+                        {/* NOTE */}
                         <div className="checkout-box">
-                            <input type="text" value={note} onChange={(e) => setNote(e.target.value)} className="form-control" placeholder="Ghi chú đơn hàng" />
+
+                            <input
+                                type="text"
+                                value={note}
+                                onChange={(e) => setNote(e.target.value)}
+                                className="form-control"
+                                placeholder="Ghi chú đơn hàng"
+                            />
+
                         </div>
+
                     </div>
+
+                    {/* RIGHT */}
                     <div className="col-lg-5 col-md-12">
+
+                        {/* CART */}
                         <div className="checkout-box">
+
                             <h5>Giỏ hàng</h5>
 
                             {cartItems.length === 0 && (
@@ -211,38 +343,48 @@ function Checkout() {
 
                             {cartItems.map(item => (
                                 <div className="cart-item" key={item.id}>
+
                                     <img
                                         src={`http://127.0.0.1:8000/${item.image}`}
                                         className="cart-img"
                                         alt={item.name}
                                     />
+
                                     <div className="cart-info">
+
                                         <div className="cart-title">
                                             <span>{item.name}</span>
                                         </div>
+
                                         <div className="cart-price-qty">
+
                                             <div>
                                                 <span className="price-new">
                                                     {item.price.toLocaleString()}đ
                                                 </span>
                                             </div>
+
                                             <div>
                                                 x {item.quantity}
                                             </div>
+
                                         </div>
+
                                     </div>
+
                                 </div>
                             ))}
-                        </div>
-                        <div className="checkout-box">
-                            <h5>Mã khuyến mãi</h5>
 
-                            {coupons.length === 0 && (
-                                <div>Không có voucher</div>
-                            )}
+                        </div>
+
+                        {/* VOUCHER */}
+                        <div className="checkout-box">
+
+                            <h5>Mã khuyến mãi</h5>
 
                             {coupons.map(c => (
                                 <label key={c.id} className="address-radio">
+
                                     <input
                                         type="radio"
                                         name="coupon"
@@ -257,10 +399,12 @@ function Checkout() {
                                     <div>
                                         <strong>{c.code}</strong> - {c.label}
                                     </div>
+
                                 </label>
                             ))}
 
                             <div className="input-group mt-2">
+
                                 <input
                                     type="text"
                                     className="form-control"
@@ -270,48 +414,85 @@ function Checkout() {
                                 />
 
                                 <div className="input-group-append">
+
                                     <button
                                         className="btn btn-primary"
                                         type="button"
                                         onClick={handleApplyVoucher}
                                         disabled={loadingVoucher}
                                     >
-                                        {loadingVoucher ? "Đang áp dụng..." : "Áp dụng"}
+                                        {loadingVoucher
+                                            ? "Đang áp dụng..."
+                                            : "Áp dụng"}
                                     </button>
+
                                 </div>
+
                             </div>
 
                             {voucherMessage && (
-                                <div style={{ color: discount > 0 ? "green" : "red" }}>
+                                <div
+                                    style={{
+                                        color: discount > 0 ? "green" : "red"
+                                    }}
+                                >
                                     {voucherMessage}
                                 </div>
                             )}
+
                         </div>
+
+                        {/* SUMMARY */}
                         <div className="checkout-box">
+
                             <h5>Tóm tắt đơn hàng</h5>
+
                             <div className="summary-row">
                                 <span>Tổng tiền hàng</span>
                                 <span>{subtotal.toLocaleString()}đ</span>
                             </div>
+
                             <div className="summary-row">
                                 <span>Giảm giá</span>
                                 <span>-{discount.toLocaleString()}đ</span>
                             </div>
+
                             <div className="summary-row">
                                 <span>Phí vận chuyển</span>
                                 <span>{shippingFee.toLocaleString()}đ</span>
                             </div>
 
                             <div className="summary-total">
+
                                 <span>Tổng thanh toán</span>
-                                <span>{finalTotal.toLocaleString()}đ</span>
+
+                                <span>
+                                    {finalTotal.toLocaleString()}đ
+                                </span>
+
                             </div>
-                            <button className="btn btn-checkout" onClick={handlePlaceOrder} disabled={!selectedAddressId} style={{ backgroundColor: "#FFA500", padding: "12px" }}>{loadingOrder ? "Đang xử lý..." : "Đặt hàng"}</button>
+
+                            <button
+                                className="btn btn-checkout"
+                                onClick={handlePlaceOrder}
+                                disabled={loadingOrder}
+                                style={{
+                                    backgroundColor: "#FFA500",
+                                    padding: "12px"
+                                }}
+                            >
+                                {loadingOrder
+                                    ? "Đang xử lý..."
+                                    : "Đặt hàng"}
+                            </button>
+
                         </div>
+
                     </div>
                 </div>
             </div>
         </>
     );
 }
+
 export default Checkout;

@@ -5,9 +5,7 @@ import { extractBudget, extractQuantity, extractSeafoodKeyword, findBestProductM
 export function getLocalResponse(userMsg: string, products: ProductItem[], convState: ConversationState): LocalResponse {
   const msg = userMsg.toLowerCase().trim();
 
-  // ==========================================
-  // 1. GREET - CHÀO HỎI
-  // ==========================================
+
   if (/^(xin chào|hello|hi|chào|bắt đầu)$/.test(msg)) {
     return {
       text: "Xin chào! 👋 Mình là trợ lý AI của **FishMarket**. Mình có thể giúp bạn:\n• 🛒 Mua và tìm sản phẩm\n• 🍽️ Gợi ý món ăn / Combo\n• 📦 Kiểm tra đơn hàng\n• 🚨 Hỗ trợ khiếu nại",
@@ -15,9 +13,6 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
     };
   }
 
-  // ==========================================
-  // 2. TRACK ORDER - KIỂM TRA ĐƠN HÀNG
-  // ==========================================
   if (/đơn hàng.*tới đâu|kiểm tra đơn|check đơn|tình trạng đơn/.test(msg)) {
     return {
       text: "📦 Bạn vui lòng cung cấp:\n- **Mã đơn hàng** (VD: DH1023)\n- Hoặc **Số điện thoại** đặt hàng\n\nMình sẽ kiểm tra tình trạng giao hàng ngay giúp bạn nhé!",
@@ -25,13 +20,18 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
     };
   }
 
-  // ==========================================
-  // 3. COMPLAINT - KHIẾU NẠI / SỰ CỐ
-  // ==========================================
-  if (/không tươi|chết|hôi|hư|hỏng|khiếu nại|thất vọng/.test(msg)) {
+  if (/(^|\s)(không tươi|chết|hôi|hư|hỏng|khiếu nại|thất vọng)($|\s|[.,!?])/.test(msg)) {
     return {
       text: "🙏 Rất xin lỗi vì trải nghiệm chưa tốt của bạn.\n\n👉 Bạn vui lòng cung cấp giúp mình:\n1. **Mã đơn hàng**\n2. **Hình ảnh/Video** sản phẩm (nếu có)\n\nBên mình sẽ kiểm tra và hỗ trợ đổi/trả 100% ngay lập tức ạ.",
       quickReplies: ["Gọi Hotline hỗ trợ ngay"],
+    };
+  }
+
+  if (/hotline|liên hệ|tổng đài|gọi/.test(msg)) {
+    return {
+      text: "📞 Hotline hỗ trợ 24/7 của FishMarket là: **0909 999 999**.\nBạn có thể gọi trực tiếp để được giải quyết nhanh nhất nhé!",
+      quickReplies: ["Xem sản phẩm", "Kiểm tra đơn hàng"],
+      newState: { stage: "idle" }
     };
   }
 
@@ -84,10 +84,14 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
   }
 
   // ==========================================
-  // 6. COMBO SUGGESTION - GỢI Ý COMBO / BUDGET
+  // 6. COMBO SUGGESTION - GỢI Ý COMBO / BUDGET (LOCAL LOGIC)
   // ==========================================
+  // Lấy kiểu ăn khách muốn (lẩu/nướng/hấp) để câu chữ hợp lý hơn
+  const typeMatch = msg.match(/(lẩu|nướng|hấp|nhậu|tiệc)/);
+  const mealType = typeMatch ? typeMatch[1] : "ăn";
+
   // Gợi ý theo số người ăn
-  const peopleMatch = msg.match(/(\d+)\s*(người|ng).*(ăn|lẩu|nướng|nhậu)/);
+  const peopleMatch = msg.match(/(\d+)\s*(người|ng)/);
   if (peopleMatch) {
     const peopleCount = parseInt(peopleMatch[1]);
     const estimatedBudget = peopleCount * 250000; // Ước tính 250k/người
@@ -95,41 +99,34 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
 
     if (combo.items.length > 0) {
       return {
-        text: `👨‍👩‍👧‍👦 Mình gợi ý combo ${peopleMatch[3] || "ăn"} cho ${peopleCount} người nhé:\n\n`
+        text: `👨‍👩‍👧‍👦 Mình gợi ý combo ${mealType} cho ${peopleCount} người nhé:\n\n`
           + combo.items.map(p => `• ${p.name} - ${Number(p.price).toLocaleString("vi-VN")}đ`).join("\n")
-          + `\n\n💰 Tổng tham khảo: ~${combo.total.toLocaleString("vi-VN")}đ\n👉 Bạn muốn lấy combo này không?`,
+          + `\n\n💰 Tổng tham khảo: ~${combo.total.toLocaleString("vi-VN")}đ\n👉 Bạn muốn chốt combo này không?`,
         quickReplies: ["Lấy combo này", "Đổi món khác"],
         newState: { pendingComboItems: combo.items, pendingPrice: combo.total }
       };
     }
   }
 
-  // Gợi ý theo ngân sách nhập vào
+  // Gợi ý theo ngân sách nhập vào (Ví dụ: "2 triệu ăn gì", "Combo 500k")
   const budget = extractBudget(msg);
-  const isPartyIntent = /lẩu|tiệc|nhậu|combo|ăn|tụ tập/.test(msg);
-  const isCookingIntent = /nấu|công thức|chế biến/.test(msg);
-
   if (budget) {
-    let textPrefix = `🛒 Với ${budget.toLocaleString("vi-VN")}đ bạn có thể mua:\n\n`;
-    if (isPartyIntent) textPrefix = `🍲 Combo lẩu ${budget.toLocaleString("vi-VN")}đ:\n\n`;
-    if (isCookingIntent) textPrefix = `🍳 Gợi ý món nấu từ ${budget.toLocaleString("vi-VN")}đ:\n\n`;
-
     const suggest = suggestProductsByBudget(budget, products);
-    return {
-      text: textPrefix
-        + suggest.items.map(p => `• ${p.name} - ${Number(p.price).toLocaleString("vi-VN")}đ`).join("\n")
-        + `\n\n💰 Tổng: ~${suggest.total.toLocaleString("vi-VN")}đ`,
-      quickReplies: ["Lấy combo này", "Xem thêm"],
-      newState: { pendingComboItems: suggest.items, pendingPrice: suggest.total },
-    };
+    if (suggest.items.length > 0) {
+      return {
+        text: `🛒 Với ngân sách ${budget.toLocaleString("vi-VN")}đ, đây là menu ${mealType} tuyệt vời dành cho bạn:\n\n`
+          + suggest.items.map(p => `• ${p.name} - ${Number(p.price).toLocaleString("vi-VN")}đ`).join("\n")
+          + `\n\n💰 Tổng: ~${suggest.total.toLocaleString("vi-VN")}đ\n👉 Bạn lấy luôn combo này nhé?`,
+        quickReplies: ["Lấy combo này", "Xem thêm"],
+        newState: { pendingComboItems: suggest.items, pendingPrice: suggest.total },
+      };
+    }
   }
 
   // ==========================================
   // 7. SEARCH PRODUCT & ASK PRICE
   // ==========================================
-  // ==========================================
   // 7.1. SẢN PHẨM BÁN CHẠY (BEST SELLER)
-  // ==========================================
   if (/bán chạy|best seller|hot nhất|mua nhiều/.test(msg)) {
     const topProducts = [...products].sort((a, b) => Number(b.price) - Number(a.price)).slice(0, 5);
     return {
@@ -138,9 +135,7 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
     };
   }
 
-  // ==========================================
-  // 7.2. SEARCH PRODUCT & ASK PRICE
-  // ==========================================
+  // 7.2. TÌM SẢN PHẨM & HỎI GIÁ
   if (/giá|bao nhiêu|có.*không|còn.*không|tìm/.test(msg)) {
     const kw = extractSeafoodKeyword(msg);
     if (kw) {
@@ -212,7 +207,7 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
       const upsellMsg = isCloseToFreeship ? `\n💡 *Gợi ý: Mua thêm chút Mực hoặc Nghêu để đủ 300k nhận Freeship nhé!*` : `\n👉 *Món này đang là best-seller hôm nay đó!*`;
 
       return {
-        text: `🛒 **${displayName}** tươi rói hiện có sẵn tại ObeSeaFood!\n\nGiá: ~**${price.toLocaleString("vi-VN")}đ/kg**${upsellMsg}\n\nBạn muốn lấy **bao nhiêu** để mình chuẩn bị?`,
+        text: `🛒 **${displayName}** tươi rói hiện có sẵn tại FishMarket!\n\nGiá: ~**${price.toLocaleString("vi-VN")}đ/kg**${upsellMsg}\n\nBạn muốn lấy **bao nhiêu** để mình chuẩn bị?`,
         quickReplies: ["0.5kg", "1kg", "2kg"],
         newState: { stage: "awaiting_quantity", pendingProduct: displayName, pendingPrice: price },
       };
@@ -285,7 +280,6 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
   // ==========================================
   // 10. FALLBACK - NGOÀI LUỒNG -> ĐẨY CHO GEMINI
   // ==========================================
-  // Quan trọng: Trả về text rỗng để component ChatBox.tsx biết gọi AI Gemini
   return {
     text: "",
     quickReplies: [],
@@ -296,13 +290,26 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
 // PROMPT CHO GEMINI KHI VÀO FALLBACK
 // ==========================================
 export function buildSystemPrompt(products: ProductItem[], cart: any[]): string {
-  const productList = products.slice(0, 15).map((p) => `- ${p.name}: ${Number(p.price).toLocaleString("vi-VN")}đ`).join("\n");
 
-  const cartSummary = cart && cart.length > 0
-    ? `Giỏ hàng hiện tại của khách: ${cart.map(c => c.qty + ' ' + c.name).join(", ")}.`
+  const safeProducts = products || [];
+  // const productList = safeProducts.map((p) => `- ${p.name}: ${Number(p.price || 0).toLocaleString("vi-VN")}đ`).join("\n");
+
+  const productList = safeProducts.map((p) => {
+    const price = Number(p.price || 0).toLocaleString("vi-VN");
+
+    // Xử lý fallback trong trường hợp DB thiếu dữ liệu (mặc định là 1kg)
+    const weight = p.weight ? p.weight : 1;
+    const unit = p.unit ? p.unit : "kg";
+
+    return `- ${p.name}: ${price}đ / ${weight}${unit}`;
+  }).join("\n");
+
+  const safeCart = cart || [];
+  const cartSummary = safeCart.length > 0
+    ? `Giỏ hàng hiện tại của khách: ${safeCart.map(c => c.qty + ' ' + c.name).join(", ")}.`
     : "Giỏ hàng đang trống.";
 
-  return `Bạn là AI Bán Hàng chuyên nghiệp của ObeSeaFood (Đà Nẵng).
+  return `Bạn là AI Bán Hàng chuyên nghiệp của FishMarket (Đà Nẵng).
 TÌNH TRẠNG HIỆN TẠI: ${cartSummary}
 SẢN PHẨM SẴN CÓ THAM KHẢO:\n${productList}
 

@@ -1,8 +1,6 @@
 function AboutUs() {
     return (
         <div className="about-page">
-
-            {/* HERO */}
             <div className="about-hero text-white d-flex align-items-center justify-content-center">
                 <div className="text-center">
                     <h1>FISHMARKET</h1>
@@ -11,8 +9,6 @@ function AboutUs() {
             </div>
 
             <div className="container py-5">
-
-                {/* INTRO */}
                 <div className="text-center mb-5">
                     <h2>Về chúng tôi</h2>
                     <p>
@@ -21,7 +17,6 @@ function AboutUs() {
                     </p>
                 </div>
 
-                {/* FEATURES */}
                 <div className="row text-center mb-5">
                     <div className="col-md-3">
                         <i className="fa-solid fa-fish fa-2x mb-3 text-primary"></i>
@@ -48,7 +43,6 @@ function AboutUs() {
                     </div>
                 </div>
 
-                {/* STATS */}
                 <div className="row text-center stats-box mb-5">
                     <div className="col-md-3">
                         <h3>10K+</h3>
@@ -68,8 +62,6 @@ function AboutUs() {
                     </div>
                 </div>
 
-                {/* MISSION */}
-                {/* MISSION - UPGRADED */}
                 <div className="mission-section mb-5">
                     <div className="text-center mb-4">
                         <h2>Sứ mệnh & Tầm nhìn</h2>
