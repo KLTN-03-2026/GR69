@@ -35,10 +35,8 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
     };
   }
 
-  // ==========================================
   // 4. DELIVERY INFO & PAYMENT - GIAO HÀNG & THANH TOÁN
-  // ==========================================
-  if (/ship bao lâu|giao bao lâu|freeship/.test(msg)) {
+  if (/ship bao lâu|giao bao lâu|chính sách giao hàng|freeship/.test(msg)) {
     return { text: DELIVERY_POLICY, quickReplies: ["Xem sản phẩm", "Cách thanh toán"] };
   }
 
@@ -49,9 +47,7 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
     };
   }
 
-  // ==========================================
   // 5. THANH TOÁN & GIỎ HÀNG 
-  // ==========================================
   if (/thanh toán|checkout|xem giỏ hàng/.test(msg)) {
     if (convState.cart.length === 0) {
       return {
@@ -83,49 +79,53 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
     };
   }
 
-  // ==========================================
-  // 6. COMBO SUGGESTION - GỢI Ý COMBO / BUDGET (LOCAL LOGIC)
-  // ==========================================
-  // Lấy kiểu ăn khách muốn (lẩu/nướng/hấp) để câu chữ hợp lý hơn
+  // 6. COMBO SUGGESTION - GỢI Ý KẾT HỢP (BUDGET + SỐ NGƯỜI + HÌNH THỨC)
   const typeMatch = msg.match(/(lẩu|nướng|hấp|nhậu|tiệc)/);
   const mealType = typeMatch ? typeMatch[1] : "ăn";
 
-  // Gợi ý theo số người ăn
   const peopleMatch = msg.match(/(\d+)\s*(người|ng)/);
-  if (peopleMatch) {
-    const peopleCount = parseInt(peopleMatch[1]);
-    const estimatedBudget = peopleCount * 250000; // Ước tính 250k/người
-    const combo = suggestProductsByBudget(estimatedBudget, products);
+  const peopleCount = peopleMatch ? parseInt(peopleMatch[1]) : null;
+
+  const userBudget = extractBudget(msg);
+
+  if (peopleCount || userBudget) {
+    const targetBudget = userBudget || (peopleCount ? peopleCount * 250000 : 0);
+    let suitableProducts = products;
+    if (mealType === "nướng") {
+      suitableProducts = products.filter(p => /mực|bạch tuộc|hàu|tôm|sò|ốc|ngao/i.test(p.name) || p.category === "nướng");
+    } else if (mealType === "lẩu") {
+      suitableProducts = products.filter(p => /cá|tôm|nghêu|ngao|vẹm|mực/i.test(p.name) || p.category === "lẩu");
+    } else if (mealType === "hấp") {
+      suitableProducts = products.filter(p => /cua|ghẹ|tôm|ngao|nghêu|mực|ốc|sò/i.test(p.name) || p.category === "hấp");
+    }
+
+    if (suitableProducts.length === 0) suitableProducts = products;
+
+    const combo = suggestProductsByBudget(targetBudget, suitableProducts);
 
     if (combo.items.length > 0) {
+      let introText = "👨‍👩‍👧‍👦 Mình gợi ý combo";
+      if (mealType !== "ăn") introText += ` **${mealType}**`;
+      if (peopleCount) introText += ` cho **${peopleCount} người**`;
+      if (userBudget) introText += ` với tài chính khoảng **${userBudget.toLocaleString("vi-VN")}đ**`;
+      else if (peopleCount) introText += ` (tài chính dự kiến ~${targetBudget.toLocaleString("vi-VN")}đ)`;
+      introText += " nhé:\n\n";
+
       return {
-        text: `👨‍👩‍👧‍👦 Mình gợi ý combo ${mealType} cho ${peopleCount} người nhé:\n\n`
-          + combo.items.map(p => `• ${p.name} - ${Number(p.price).toLocaleString("vi-VN")}đ`).join("\n")
-          + `\n\n💰 Tổng tham khảo: ~${combo.total.toLocaleString("vi-VN")}đ\n👉 Bạn muốn chốt combo này không?`,
+        text: introText
+          + combo.items.map(p => {
+            const weight = p.weight ? p.weight : 1;
+            const unit = p.unit ? p.unit : "kg";
+            return `• ${p.name} - ${Number(p.price).toLocaleString("vi-VN")}đ / ${weight}${unit}`;
+          }).join("\n")
+          + `\n\n💰 Tổng tham khảo: ~**${combo.total.toLocaleString("vi-VN")}đ**\n👉 Bạn muốn chốt combo này không?`,
         quickReplies: ["Lấy combo này", "Đổi món khác"],
         newState: { pendingComboItems: combo.items, pendingPrice: combo.total }
       };
     }
   }
 
-  // Gợi ý theo ngân sách nhập vào (Ví dụ: "2 triệu ăn gì", "Combo 500k")
-  const budget = extractBudget(msg);
-  if (budget) {
-    const suggest = suggestProductsByBudget(budget, products);
-    if (suggest.items.length > 0) {
-      return {
-        text: `🛒 Với ngân sách ${budget.toLocaleString("vi-VN")}đ, đây là menu ${mealType} tuyệt vời dành cho bạn:\n\n`
-          + suggest.items.map(p => `• ${p.name} - ${Number(p.price).toLocaleString("vi-VN")}đ`).join("\n")
-          + `\n\n💰 Tổng: ~${suggest.total.toLocaleString("vi-VN")}đ\n👉 Bạn lấy luôn combo này nhé?`,
-        quickReplies: ["Lấy combo này", "Xem thêm"],
-        newState: { pendingComboItems: suggest.items, pendingPrice: suggest.total },
-      };
-    }
-  }
-
-  // ==========================================
   // 7. SEARCH PRODUCT & ASK PRICE
-  // ==========================================
   // 7.1. SẢN PHẨM BÁN CHẠY (BEST SELLER)
   if (/bán chạy|best seller|hot nhất|mua nhiều/.test(msg)) {
     const topProducts = [...products].sort((a, b) => Number(b.price) - Number(a.price)).slice(0, 5);
@@ -169,9 +169,7 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
     }
   }
 
-  // ==========================================
   // 8. BẢO QUẢN & CÔNG THỨC NẤU ĂN
-  // ==========================================
   if (/bảo quản|rã đông|cất|để được bao lâu|tươi lâu/.test(msg)) {
     const matched = Object.keys(PRESERVATION_TIPS).find((k) => msg.includes(k));
     if (matched) return { text: PRESERVATION_TIPS[matched], quickReplies: ["Xem sản phẩm", "Công thức nấu ăn"] };
@@ -183,7 +181,10 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
 
   const isRecipeIntent = /công thức|nấu|chế biến|cách làm/.test(msg);
   if (isRecipeIntent) {
-    const matched = Object.keys(RECIPES).find((k) => msg.includes(k));
+    const matched = Object.keys(RECIPES)
+      .sort((a, b) => b.length - a.length)
+      .find((k) => msg.includes(k));
+
     if (matched) return { text: RECIPES[matched], quickReplies: ["Công thức khác", "Xem sản phẩm"] };
     return {
       text: "Bạn muốn xem công thức nấu món nào?\n🐟 Cá hồi · 🦐 Tôm · 🦑 Mực · 🦀 Cua",
@@ -191,9 +192,7 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
     };
   }
 
-  // ==========================================
   // 9. CHỐT ĐƠN / ADD TO CART 
-  // ==========================================
   const buyMatch = msg.match(/(?:(?:tôi\s+)?(?:muốn\s+|cần\s+)?(?:mua|đặt|lấy|order)|cho\s+mình)\s+(.+)/);
   if (buyMatch && !/^(gì|bao nhiêu|giá)/.test(buyMatch[1].trim())) {
     const rawItem = buyMatch[1].trim();
@@ -203,13 +202,33 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
     if (found || extractSeafoodKeyword(rawItem)) {
       const price = found ? Number(found.price) : 150000;
       const displayName = found?.name || (kw.charAt(0).toUpperCase() + kw.slice(1));
+
+      const baseWeight = found?.weight ? Number(found.weight) : 1;
+      const unit = found?.unit ? found.unit : "kg";
+
+      const formatLabel = (w: number, u: string, m: number) => {
+        const uLower = u.toLowerCase();
+        if (uLower.includes('kg')) return `${w * m}kg`;
+        if (uLower.startsWith('g')) {
+          const totalG = w * m;
+          return totalG >= 1000 ? `${totalG / 1000}kg` : `${totalG}g`;
+        }
+        return `${w * m} ${uLower.includes('con') ? 'con' : u}`;
+      };
+
+      const qtyReplies = [
+        formatLabel(baseWeight, unit, 1),
+        formatLabel(baseWeight, unit, 2),
+        formatLabel(baseWeight, unit, 3)
+      ];
+
       const isCloseToFreeship = price < 300000 && price > 150000;
       const upsellMsg = isCloseToFreeship ? `\n💡 *Gợi ý: Mua thêm chút Mực hoặc Nghêu để đủ 300k nhận Freeship nhé!*` : `\n👉 *Món này đang là best-seller hôm nay đó!*`;
 
       return {
-        text: `🛒 **${displayName}** tươi rói hiện có sẵn tại FishMarket!\n\nGiá: ~**${price.toLocaleString("vi-VN")}đ/kg**${upsellMsg}\n\nBạn muốn lấy **bao nhiêu** để mình chuẩn bị?`,
-        quickReplies: ["0.5kg", "1kg", "2kg"],
-        newState: { stage: "awaiting_quantity", pendingProduct: displayName, pendingPrice: price },
+        text: `🛒 **${displayName}** tươi rói hiện có sẵn tại FishMarket!\n\nGiá: ~**${price.toLocaleString("vi-VN")}đ / ${baseWeight}${unit}**${upsellMsg}\n\nBạn muốn lấy **bao nhiêu** để mình chuẩn bị?`,
+        quickReplies: qtyReplies,
+        newState: { stage: "awaiting_quantity", pendingProduct: displayName, pendingPrice: price, pendingUnit: unit, pendingWeight: baseWeight },
       };
     }
   }
@@ -240,23 +259,73 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
   }
 
   if (convState.stage === "awaiting_quantity") {
-    const qty = extractQuantity(msg);
-    if (qty) {
+    const msgLower = msg.toLowerCase().replace(/,/g, '.');
+    const numMatch = msgLower.match(/(\d+(?:\.\d+)?)/);
+
+    if (numMatch) {
+      const inputNum = parseFloat(numMatch[1]);
+      const pUnit = (convState.pendingUnit || "kg").toLowerCase();
+      const pWeight = convState.pendingWeight || 1;
+
+      let baseInGrams = pWeight;
+      if (pUnit.includes('kg')) baseInGrams = pWeight * 1000;
+      else if (pUnit.startsWith('g')) baseInGrams = pWeight;
+
+      let userInGrams = inputNum;
+      if (msgLower.includes('kg')) {
+        userInGrams = inputNum * 1000;
+      } else if (msgLower.includes('g') && !msgLower.includes('kg')) {
+        userInGrams = inputNum;
+      } else {
+        if (inputNum > 20 && pUnit.startsWith('g')) {
+          userInGrams = inputNum;
+        } else {
+          userInGrams = inputNum * baseInGrams;
+        }
+      }
+
+      let finalQty = Math.round(userInGrams / baseInGrams);
+      if (finalQty < 1) finalQty = 1;
+
       const product = convState.pendingProduct || "hải sản";
       const price = convState.pendingPrice || 150000;
+
+      let displayQtyText = `${finalQty}`;
+      if (pUnit.includes('/')) displayQtyText = `${finalQty} ${pUnit.split('/')[1]}`;
+      else if (pUnit.includes('con')) displayQtyText = `${finalQty} con`;
+      else displayQtyText = `${finalQty} phần`;
+
+      let noteText = "";
+      if (pUnit.startsWith('g') || pUnit.includes('kg')) {
+        const totalKg = (baseInGrams * finalQty) / 1000;
+        noteText = ` (${totalKg >= 1 ? totalKg + 'kg' : (baseInGrams * finalQty) + 'g'})`;
+      }
+
       return {
-        text: `✅ **Đã thêm ${qty} ${product} vào giỏ hàng** 🛒\n\nTổng tạm tính: ~**${price.toLocaleString("vi-VN")}đ**\n\n👉 Bạn muốn:`,
+        text: `✅ **Đã thêm ${displayQtyText} ${product}${noteText} vào giỏ hàng** 🛒\n\nTổng tạm tính: ~**${(price * finalQty).toLocaleString("vi-VN")}đ**\n\n👉 Bạn muốn:`,
         quickReplies: ["🛒 Xem giỏ hàng", "🛒 Mua thêm"],
         newState: {
           stage: "idle",
-          cart: [...convState.cart, { name: product, qty, price }],
-          pendingProduct: undefined, pendingPrice: undefined,
+          cart: [...convState.cart, { name: product, qty: finalQty.toString(), price }],
+          pendingProduct: undefined, pendingPrice: undefined, pendingUnit: undefined, pendingWeight: undefined,
         },
       };
     }
+    const bWeight = convState.pendingWeight || 1;
+    const bUnit = convState.pendingUnit || "kg";
+    const formatLabel = (w: number, u: string, m: number) => {
+      const uLower = u.toLowerCase();
+      if (uLower.includes('kg')) return `${w * m}kg`;
+      if (uLower.startsWith('g')) {
+        const totalG = w * m;
+        return totalG >= 1000 ? `${totalG / 1000}kg` : `${totalG}g`;
+      }
+      return `${w * m} ${uLower.includes('con') ? 'con' : u}`;
+    };
+
     return {
-      text: `Bạn muốn mua bao nhiêu **${convState.pendingProduct}**? (ví dụ: 1kg, 500g, 2 con)`,
-      quickReplies: ["0.5kg", "1kg", "Hủy"],
+      text: `Bạn muốn mua bao nhiêu **${convState.pendingProduct}**? (ví dụ: ${formatLabel(bWeight, bUnit, 1)}, ${formatLabel(bWeight, bUnit, 2)}...)`,
+      quickReplies: [formatLabel(bWeight, bUnit, 1), formatLabel(bWeight, bUnit, 2), "Hủy"],
     };
   }
 
@@ -277,27 +346,21 @@ export function getLocalResponse(userMsg: string, products: ProductItem[], convS
     };
   }
 
-  // ==========================================
   // 10. FALLBACK - NGOÀI LUỒNG -> ĐẨY CHO GEMINI
-  // ==========================================
   return {
     text: "",
     quickReplies: [],
   };
 }
 
-// ==========================================
 // PROMPT CHO GEMINI KHI VÀO FALLBACK
-// ==========================================
 export function buildSystemPrompt(products: ProductItem[], cart: any[]): string {
 
   const safeProducts = products || [];
-  // const productList = safeProducts.map((p) => `- ${p.name}: ${Number(p.price || 0).toLocaleString("vi-VN")}đ`).join("\n");
 
   const productList = safeProducts.map((p) => {
     const price = Number(p.price || 0).toLocaleString("vi-VN");
 
-    // Xử lý fallback trong trường hợp DB thiếu dữ liệu (mặc định là 1kg)
     const weight = p.weight ? p.weight : 1;
     const unit = p.unit ? p.unit : "kg";
 

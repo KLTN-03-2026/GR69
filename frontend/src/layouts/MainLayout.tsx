@@ -209,7 +209,7 @@ function MainLayout() {
                                 <ul>
                                     <li><Link to="/about-us">Về chúng tôi</Link></li>
                                     <li><Link to="#">Mua sắm an toàn</Link></li>
-                                    <li><Link to="#">Thông tin giao hàng</Link></li>
+                                    <li><Link to="/shipping-policy">Thông tin giao hàng</Link></li>
                                     <li><Link to="#">Chính sách</Link></li>
                                     <li><Link to="/contact">Địa chỉ của shop</Link></li>
                                 </ul>

@@ -31,6 +31,8 @@ export interface ConversationState {
   cart: CartItem[];
   address?: string;
   currentKeyword?: string;
+  pendingUnit?: string;
+  pendingWeight?: number;
 }
 
 export type LocalResponse = {

@@ -92,7 +92,7 @@ export function suggestProductsByBudget(budget: number, products: ProductItem[])
     if (p.category) usedCategory.add(p.category);
 
     // Đạt đủ 4 món và chiếm > 75% ngân sách thì dừng
-    if (selected.length >= 4 && total >= budget * 0.75) break;
+    if (selected.length >= 4 && total >= budget * 0.85) break;
   }
 
   // 4. Vòng 2: Nếu vòng 1 lấy chưa đủ 4 món (hoặc dư quá nhiều tiền), nhặt thêm món bất kỳ
@@ -104,7 +104,7 @@ export function suggestProductsByBudget(budget: number, products: ProductItem[])
       selected.push(p);
       total += p.price;
 
-      if (selected.length >= 6 || total >= budget * 0.85) break;
+      if (selected.length >= 6 || total >= budget * 0.90) break;
     }
   }
 

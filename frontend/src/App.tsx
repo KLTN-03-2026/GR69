@@ -43,6 +43,7 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import Contact from './pages/main/Contact';
 import AboutUs from './pages/main/AboutUs';
+import ShippingPolicy from './pages/main/ShippingPolicy';
 
 
 function App() {
@@ -59,6 +60,7 @@ function App() {
           <Route path="/order-success" element={<OrderSuccess />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/shipping-policy" element={<ShippingPolicy />} />
 
           {/* <Route path="contact" element={<Contact />} /> */}
         </Route>
